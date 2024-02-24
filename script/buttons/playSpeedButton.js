@@ -47,6 +47,7 @@ class PlaySpeedDrawStrategy {
 }
 
 // check hit of play speed buttons
+// then regulate the play speed in accordance to the button pressed
 class PlaySpeedHitChcekStrategy {
   constructor(type) {
     this.x = null;

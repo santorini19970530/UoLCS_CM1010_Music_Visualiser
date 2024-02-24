@@ -34,17 +34,34 @@ class ControlsAndInput {
         new PlaySpeedDrawStrategy("slower"),
         new PlaySpeedHitChcekStrategy("slower")
       ),
+      louderButton: new Button(
+        divPanel.size().width / 2 + 400,
+        height - 70,
+        30,
+        30,
+        new VolumeControlDrawStrategy("up"),
+        new VolumeControlCheckStrategy("up")
+      ),
+      quieterButton: new Button(
+        divPanel.size().width / 2 + 300,
+        height - 70,
+        30,
+        30,
+        new VolumeControlDrawStrategy("down"),
+        new VolumeControlCheckStrategy("down")
+      ),
     };
   }
 
   // return click checking result
   mousePressed = function () {
     let isPressed = false;
-    //check if the playback button has been clicked
-    //if not make the visualisation fullscreen
+
+    //check if the buttons have been clicked, if not make the visualisation fullscreen
     Object.keys(this.buttons).forEach((key) => {
       if (this.buttons[key].hitCheck()) isPressed = true;
     });
+
     return isPressed;
   };
 
