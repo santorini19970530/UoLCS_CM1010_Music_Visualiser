@@ -56,6 +56,8 @@ var stars = [];
 // control the amount of the mountains
 const mountainAmountMax = 10;
 var mountains = [];
+// detect whether the mouse is pressed
+var mouseOnHold = false;
 
 function preload() {
   // preload the sound information
@@ -155,4 +157,12 @@ function windowResized() {
   // when the window has been resized. Resize canvas to fit
   resizeCanvas(divPanel.size().width, divPanel.size().height);
   background(color(39, 40, 41));
+}
+
+function mousePressed() {
+  mouseOnHold = true;
+}
+
+function mouseReleased() {
+  mouseOnHold = false;
 }

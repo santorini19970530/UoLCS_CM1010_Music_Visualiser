@@ -1,5 +1,4 @@
 // displays the play speed buttons
-
 class PlaySpeedDrawStrategy {
   constructor(type) {
     this.x = null;

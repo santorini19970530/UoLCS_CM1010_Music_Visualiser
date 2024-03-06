@@ -34,21 +34,15 @@ class ControlsAndInput {
         new PlaySpeedDrawStrategy("slower"),
         new PlaySpeedHitChcekStrategy("slower")
       ),
-      louderButton: new Button(
-        divPanel.size().width / 2 + 400,
-        height - 70,
-        30,
-        30,
-        new VolumeControlDrawStrategy("up"),
-        new VolumeControlCheckStrategy("up")
-      ),
-      quieterButton: new Button(
+
+      // sound control slider
+      volumeControlSlider: new Button(
         divPanel.size().width / 2 + 300,
-        height - 70,
-        30,
-        30,
-        new VolumeControlDrawStrategy("down"),
-        new VolumeControlCheckStrategy("down")
+        height - 80,
+        150,
+        20,
+        new VolumeControlDrawStrategy(),
+        new VolumeControlCheckStrategy()
       ),
     };
   }
@@ -68,38 +62,93 @@ class ControlsAndInput {
   // responds to keyboard presses, keycode the ascii code of the keypressed
   keyPressed = function (keycode) {
     // when number keys are pressed, select the visuals
-    if (keycode > 48 && keycode < 58) {
-      var visNumber = keycode - 49;
-      vis.selectVisual(vis.visuals[visNumber].name);
-    }
 
-    // right button - go forward one song
-    if (keycode == 39) {
-      if (this.playing) {
-        sound.stop();
-        playingSound = playingSound < sounds.length - 1 ? playingSound + 1 : 0;
-        sound = sounds[playingSound];
-        sound.loop();
-        sound.rate(playSpeed);
+    switch (keycode) {
+      // space button - play and pause the music
+      case 32:
+        if (sound.isPlaying()) sound.pause();
+        else {
+          sound.loop();
+          sound.rate(playSpeed);
+        }
+
+        controls.playing = !controls.playing;
+        break;
+
+      // number keys - call the visuals
+      case 49:
+      case 50:
+      case 51:
+      case 52:
+      case 53:
+      case 54:
+      case 55:
+      case 56:
+      case 57:
+        let visNumber = keycode - 49;
+
+        try {
+          vis.selectVisual(vis.visuals[visNumber].name);
+        } catch {
+          console.error("No such visual");
+        }
+        break;
+
+      // left button - go back one song
+      case 37:
+        if (this.playing) {
+          sound.stop();
+          playingSound =
+            playingSound > 0 ? playingSound - 1 : sounds.length - 1;
+          sound = sounds[playingSound];
+          sound.loop();
+          sound.rate(playSpeed);
+          sound.setVolume(0.1);
+        }
+        break;
+
+      // right button - go forward one song
+      case 39:
+        if (this.playing) {
+          sound.stop();
+          playingSound =
+            playingSound < sounds.length - 1 ? playingSound + 1 : 0;
+          sound = sounds[playingSound];
+          sound.loop();
+          sound.rate(playSpeed);
+          sound.setVolume(playVolume);
+        }
+        break;
+
+      // m button (no shift) - show the menu
+      case 77:
+        this.menuDisplayed = !this.menuDisplayed;
+        break;
+
+      // up button - make the volume louder
+      case 38:
+        playVolume += 0.1;
+        if (playVolume > 1.0) playVolume = 1.0;
+        controls.buttons.volumeControlSlider.drawStrategy.setSliderPos(
+          playVolume
+        );
         sound.setVolume(playVolume);
-      }
-    }
 
-    // left button - go back one song
-    if (keycode == 37) {
-      if (this.playing) {
-        sound.stop();
-        playingSound = playingSound > 0 ? playingSound - 1 : sounds.length - 1;
-        sound = sounds[playingSound];
-        sound.loop();
-        sound.rate(playSpeed);
-        sound.setVolume(0.1);
-      }
-    }
+        break;
 
-    // space button - show the menu
-    if (keycode == 32) {
-      this.menuDisplayed = !this.menuDisplayed;
+      // down button - make the volume quieter
+      case 40:
+        playVolume -= 0.1;
+        if (playVolume <= 0.1) playVolume = 0.1;
+        controls.buttons.volumeControlSlider.drawStrategy.setSliderPos(
+          playVolume
+        );
+        sound.setVolume(playVolume);
+        break;
+
+      // default: other keys do nothing
+      default:
+        break;
     }
   };
 
