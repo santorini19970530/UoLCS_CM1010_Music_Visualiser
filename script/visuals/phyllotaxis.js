@@ -14,6 +14,10 @@ function Phyllotaxis() {
   this.draw = function () {
     let spectrum = fourier.analyze();
 
+    drawVarientBackground(
+      color(fourier.getEnergy("lowMid"), 100, fourier.getEnergy("highMid"))
+    );
+
     push();
 
     translate(width / 2, height / 2);
@@ -48,5 +52,24 @@ function Phyllotaxis() {
   let clearDots = function () {
     n = 0;
     for (let i = dots.length - 1; i >= 0; i--) dots.pop();
+  };
+
+  // make the background looks like near the sun
+  // linearGradient is not p5.js function, this is WebAPI function
+  // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/createLinearGradient
+
+  let drawVarientBackground = function (c) {
+    let gradient = drawingContext.createLinearGradient(
+      0,
+      50,
+      width,
+      height - 50 - 120
+    );
+    gradient.addColorStop(0, color(red(c), blue(c), green(c)));
+    gradient.addColorStop(0.5, color(blue(c), green(c), red(c)));
+    gradient.addColorStop(1, color(green(c), blue(c), red(c)));
+    drawingContext.fillStyle = gradient;
+
+    rect(0, 50, width, height - 50 - 120);
   };
 }

@@ -123,8 +123,8 @@ const TimeDisplay = function (y) {
     push();
 
     strokeWeight(2);
-    stroke(0);
-    fill(0);
+    stroke(255);
+    fill(255);
     textSize(20);
     textStyle(BOLD);
     textFont(fontDigit);

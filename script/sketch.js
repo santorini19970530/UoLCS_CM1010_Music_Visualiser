@@ -67,6 +67,7 @@ function preload() {
     "./assets/stomper_reggae_bit.mp3",
     "./assets/gfriend_a_starry_sky.opus",
     "./assets/viviz_day_by_day.mp3",
+    "./assets/gfriend_sunrise.mp3",
   ];
 
   soundSource.forEach((source, i) => {
