@@ -3,20 +3,33 @@
 function Needles() {
   // private
   // how large is the arc of the needle plot.
-  let radius = 100;
+  let radius = 150;
   let energy;
 
   // public
   this.name = "needles";
 
   //frquencies used by the energyfunction to retrieve a value for each plot
-  this.frequencyBins = ["bass", "lowMid", "mid", "highMid", "treble"];
+  // human detectable sound frequencies are ranged between 16Hz and 32,768 Hz
+  // 16,384 Hz - 32,768 Hz are too high that not included in the songs
+  // hence i use the other ranges to divide into seven ranges for illustrating rainbow visual
+  this.frequencyBins = [
+    { lower: 16, upper: 32 },
+    { lower: 32, upper: 280 },
+    { lower: 280, upper: 512 },
+    { lower: 512, upper: 2048 },
+    { lower: 2048, upper: 8192 },
+    { lower: 8192, upper: 12288 },
+    { lower: 12288, upper: 16384 },
+  ];
   this.rainbow = [
     color(255, 26, 26),
+    color(265, 165, 0),
     color(255, 255, 26),
-    color(26, 26, 255),
-    color(181, 77, 255),
-    color(254, 254, 254),
+    color(0, 200, 0),
+    color(0, 194, 222),
+    color(0, 65, 141),
+    color(95, 40, 211),
   ];
 
   // draw the plots to the screen
@@ -24,19 +37,28 @@ function Needles() {
     // create an array amplitude values from the fft.
     let spectrum = fourier.analyze();
 
+    drawVarientBackground(
+      color(fourier.getEnergy("lowMid"), 100, fourier.getEnergy("highMid"))
+    );
+
     push();
 
     translate(width / 2, height / 2);
     for (let i = 0; i < this.rainbow.length; i++) {
-      energy = fourier.getEnergy(this.frequencyBins[i]);
+      energy = fourier.getEnergy(
+        this.frequencyBins[i].lower,
+        this.frequencyBins[i].upper
+      ); // getEnergy with two digit variables will get averaged amplitude of range of sound frequencies
+
       let maxAngle = map(energy, 0, 255, 0, 360);
+
       for (let alpha = 0; alpha <= maxAngle; alpha++) {
         fill(this.rainbow[i]);
-        let r = radius + i * 30;
+        let r = radius + i * 100;
         let rOffset = 0;
         let x = r * cos(alpha - 90) + rOffset;
         let y = (r + rOffset) * sin(alpha - 90);
-        ellipse(x, y, 15);
+        ellipse(x, y, 50);
       }
     }
 
@@ -49,12 +71,14 @@ function Needles() {
   // draw the graph ticks on an indivisual plot
   let ticks = function () {
     let tickRadius = radius - 20;
+
     push();
 
     stroke(color(255, 255, 255));
     strokeWeight(2);
     fill("#333333");
     translate(width / 2, height / 2);
+
     //draw the semi circle for the botttom of the needle
     textAlign(CENTER);
 
@@ -85,5 +109,24 @@ function Needles() {
     }
 
     pop();
+  };
+
+  // make the background looks like near the sun
+  // linearGradient is not p5.js function, this is WebAPI function
+  // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/createLinearGradient
+
+  let drawVarientBackground = function (c) {
+    let gradient = drawingContext.createLinearGradient(
+      0,
+      50,
+      width,
+      height - 50 - 120
+    );
+    gradient.addColorStop(0, color(red(c), blue(c), green(c)));
+    gradient.addColorStop(0.5, color(blue(c), green(c), red(c)));
+    gradient.addColorStop(1, color(green(c), blue(c), red(c)));
+    drawingContext.fillStyle = gradient;
+
+    rect(0, 50, width, height - 50 - 120);
   };
 }
