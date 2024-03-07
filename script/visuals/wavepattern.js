@@ -33,7 +33,7 @@ function WavePattern() {
       beginShape();
       for (let alpha = 0; alpha <= 180; alpha++) {
         let i = floor(map(alpha, 0, 180, 0, wave.length - 1));
-        let r = 450;
+        let r = 300;
         let rOffset = map(wave[i], -0.2, 0.2, -100, 100);
         let x = (r + rOffset) * cos(alpha);
         let y = (r + rOffset) * sin(alpha) * half;
@@ -51,7 +51,7 @@ function WavePattern() {
       beginShape();
       for (let alpha = 0; alpha <= 180; alpha++) {
         let i = floor(map(alpha, 0, 180, 0, wave.length - 1));
-        let r = 250;
+        let r = 150;
         let rOffset = map(wave[i], -0.2, 0.2, -100, 100);
         let x = (r + rOffset) * cos(180 - alpha);
         let y = (r + rOffset) * sin(180 - alpha) * half;
@@ -68,7 +68,7 @@ function WavePattern() {
       map(fourier.getEnergy("highMid"), 0, 255, 9, 255)
     );
     for (let i = 0; i < 10; i++) {
-      let p = new Particle(450 + 10, particleColor);
+      let p = new Particle(300 + 10, particleColor);
       particles.push(p);
     }
     for (let i = particles.length - 1; i >= 0; i--) {
@@ -95,11 +95,11 @@ function WavePattern() {
       height / 2,
       height / 2
     );
-    gradient.addColorStop(1, color(90, 6, 0));
-    gradient.addColorStop(0.25, color(146, 0, 4));
-    gradient.addColorStop(0.15, color(231, 62, 101));
-    gradient.addColorStop(0.1, color(231, 126, 110));
     gradient.addColorStop(0, color(238, 93, 95));
+    gradient.addColorStop(0.05, color(231, 126, 110));
+    gradient.addColorStop(0.1, color(231, 62, 101));
+    gradient.addColorStop(0.15, color(146, 0, 4));
+    gradient.addColorStop(1, color(90, 6, 0));
     drawingContext.fillStyle = gradient;
 
     rect(0, 50, width, height - 50 - 120);

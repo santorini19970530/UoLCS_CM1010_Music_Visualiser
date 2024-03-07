@@ -3,7 +3,7 @@
 function Needles() {
   // private
   // how large is the arc of the needle plot.
-  let radius = 150;
+  let radius = 100;
   let energy;
 
   // public
@@ -54,11 +54,11 @@ function Needles() {
 
       for (let alpha = 0; alpha <= maxAngle; alpha++) {
         fill(this.rainbow[i]);
-        let r = radius + i * 100;
+        let r = radius + i * 30;
         let rOffset = 0;
         let x = r * cos(alpha - 90) + rOffset;
         let y = (r + rOffset) * sin(alpha - 90);
-        ellipse(x, y, 50);
+        ellipse(x, y, 20);
       }
     }
 

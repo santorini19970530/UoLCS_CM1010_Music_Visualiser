@@ -64,7 +64,7 @@ function preload() {
   soundSource = [
     "./assets/gfriend_summer_rain.mp3",
     "./assets/viviz_maniac.mp3",
-    "./assets/stomper_reggae_bit.mp3",
+    "./assets/gfriend_flower_garden.mp3",
     "./assets/gfriend_a_starry_sky.opus",
     "./assets/viviz_day_by_day.mp3",
     "./assets/gfriend_sunrise.mp3",

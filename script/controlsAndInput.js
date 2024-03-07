@@ -91,26 +91,38 @@ class ControlsAndInput {
           vis.selectVisual(vis.visuals[visNumber].name);
 
           // some visuals need to play specific songs
-          switch (visNumber) {
-            case 1:
-              if (playingSound != 5) {
-                sound.stop();
-                playingSound = 5;
-                sound = sounds[playingSound];
-                sound.setVolume(playVolume);
-                sound.loop();
-              }
-              break;
-            case 2:
-              sound.stop();
-              playingSound = 6;
-              sound = sounds[playingSound];
-              sound.setVolume(playVolume);
-              sound.loop();
-              break;
-            default:
-              break;
-          }
+          if (this.playing)
+            switch (visNumber) {
+              case 1:
+                if (playingSound != 5) {
+                  sound.stop();
+                  playingSound = 5;
+                  sound = sounds[playingSound];
+                  sound.setVolume(playVolume);
+                  sound.loop();
+                }
+                break;
+              case 2:
+                if (playingSound != 6) {
+                  sound.stop();
+                  playingSound = 6;
+                  sound = sounds[playingSound];
+                  sound.setVolume(playVolume);
+                  sound.loop();
+                }
+                break;
+              case 3:
+                if (playingSound != 2) {
+                  sound.stop();
+                  playingSound = 2;
+                  sound = sounds[playingSound];
+                  sound.setVolume(playVolume);
+                  sound.loop();
+                }
+                break;
+              default:
+                break;
+            }
         } catch {
           console.error("No such visual");
         }
