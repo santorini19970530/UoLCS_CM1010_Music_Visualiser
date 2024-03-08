@@ -50,12 +50,11 @@ var logo, logo2;
 var canvas = null;
 var divPanel;
 var music_player = null;
+// for the 3D canvas in the first visual
+var threeDCanvas;
 // control the amount of stars
 const starsAmountMax = 40;
 var stars = [];
-// control the amount of the mountains
-const mountainAmountMax = 10;
-var mountains = [];
 // detect whether the mouse is pressed
 var mouseOnHold = false;
 
@@ -98,7 +97,20 @@ function setup() {
   canvas.parent("canvasPanel");
   background(color(39, 40, 41));
 
-  // draw the music player
+  /*
+  WEBGL canvas, for the terrain of the first visual 
+  source: https://www.youtube.com/watch?v=TaluaAD9MKA
+ */
+  threeDCanvas = createGraphics(
+    divPanel.size().width,
+    divPanel.size().height - 120,
+    WEBGL
+  );
+  threeDCanvas.clear();
+  threeDCanvas.angleMode(DEGREES);
+  threeDCanvas.parent("canvasPanel");
+
+  // draw the music player body
   music_player = new Music_Player_Frame();
 
   // set up the control panel
@@ -117,15 +129,8 @@ function setup() {
   // set the sound setting
   playSpeed = 1;
 
-  // draw the first visual
-  for (let i = 0; i < starsAmountMax; i++)
-    stars.push(
-      new Star(random(0, width), random(50, height - 150), random(5, 10))
-    );
-
-  for (let i = 0; i < mountainAmountMax; i++) {
-    mountains.push(new Mountain(i * 500, height - 120, 500));
-  }
+  // prepare stars for the first visual
+  vis.selectedVisual.setup();
 
   // make all angles as degree
   angleMode(DEGREES);
@@ -135,8 +140,9 @@ function draw() {
   // draw the music player
   music_player.draw();
 
-  //draw the selected visualisation
+  // only in the first visualisation, 3D canvas will be drawn
   vis.selectedVisual.draw();
+  if (vis.selectedVisual.name == "spectrum") image(threeDCanvas, 0, 0);
 
   // draw the controls items
   controls.draw();
@@ -150,13 +156,13 @@ function mouseClicked() {
   }
 }
 
+// send signal to contols signal
 function keyPressed() {
-  // send signal to contols signal
   controls.keyPressed(keyCode);
 }
 
+// when the window has been resized. Resize canvas to fit
 function windowResized() {
-  // when the window has been resized. Resize canvas to fit
   resizeCanvas(divPanel.size().width, divPanel.size().height);
   background(color(39, 40, 41));
 }

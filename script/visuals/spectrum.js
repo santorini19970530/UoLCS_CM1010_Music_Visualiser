@@ -4,24 +4,59 @@
 function Spectrum() {
   // private
   let spectrum;
+  let waveform;
+  let terrainValues = [];
+  let terrainVertexNumbers = { x: 70, y: 40 };
+  let terrainMaxHeight = 100;
+  let terrainParticleDisplacement = { x: 0.0, y: 0.0 };
+  let terrainAmplitude = 0.22;
 
   // public
   this.name = "spectrum";
 
+  // call the spectrum
   this.setSpectrum = function () {
     spectrum = fourier.analyze();
 
     return spectrum;
   };
 
+  // for being called by the p5.js setup
+  // hence the stars and terrain arrays can be initialised
+  this.setup = function () {
+    // prepare the stars array
+    for (let i = 0; i < starsAmountMax; i++)
+      stars.push(
+        new Star(random(0, width), random(50, height - 150), random(5, 10))
+      );
+
+    // prepare the terrain vertex array
+    for (x = 0; x < terrainVertexNumbers.x; x++) {
+      terrainParticleDisplacement.x = 0.0;
+      terrainValues.push([]);
+      for (y = 0; y < terrainVertexNumbers.y; y++) {
+        terrainValues[x][y] = map(
+          noise(terrainParticleDisplacement.x, terrainParticleDisplacement.y),
+          0,
+          1,
+          -terrainMaxHeight,
+          terrainMaxHeight
+        );
+        terrainParticleDisplacement.y += terrainAmplitude;
+      }
+    }
+    terrainParticleDisplacement.x += terrainAmplitude;
+  };
+
   // draw the visual
   this.draw = function () {
     spectrum = this.setSpectrum();
+    waveform = fourier.waveform();
 
+    // prepare the background
     drawGradientBackground();
 
-    drawMountain();
-
+    // draw the stars
     stars.forEach((star) => {
       star.draw();
       spectrum.forEach((frequency) => {
@@ -32,9 +67,9 @@ function Spectrum() {
       });
     });
 
+    // draw the NorthPole lights
     push();
     noStroke();
-    // make the lights
     for (let i = 0; i < spectrum.length; i++) {
       let lineX = map(i, 0, spectrum.length, 0, width);
       let lineY = map(spectrum[i], 0, 255, 50, (height - 150) / 2, true);
@@ -49,19 +84,48 @@ function Spectrum() {
         ellipse(lineX, lineY + 8 * j, map(spectrum[i], 0, 255, 0, 8));
     }
     pop();
-  };
 
-  // draw the mountain
-  let drawMountain = function () {
-    mountains.forEach((mountain) => {
-      mountain.draw();
-    });
+    // draw the 3D terrain
+    threeDCanvas.clear();
+    threeDCanvas.push();
+    threeDCanvas.translate(
+      -threeDCanvas.width / 2,
+      threeDCanvas.height / 2 - 520,
+      0
+    );
+    threeDCanvas.stroke(color(0, 0, 255));
+    threeDCanvas.fill(color(0, 30, 200));
+    threeDCanvas.rotateX(80);
+
+    // prepare the terrain vertex array
+    for (let x = 0; x < terrainVertexNumbers.x; x++) {
+      let spectrumIndex = Math.floor(
+        map(x, 0, terrainVertexNumbers.x, 0, spectrum.length)
+      );
+
+      let amplitude = spectrum[spectrumIndex];
+      let vertexHeight = map(amplitude, 0, 255, 0, terrainMaxHeight);
+
+      for (let y = 0; y < terrainVertexNumbers.y; y++)
+        terrainValues[x][y] = vertexHeight;
+    }
+
+    // draw the terrain vertex
+    for (let y = 0; y < terrainVertexNumbers.y; y++) {
+      threeDCanvas.beginShape(TRIANGLE_STRIP);
+      for (let x = 0; x < terrainVertexNumbers.x; x++) {
+        threeDCanvas.vertex(x * 50, y * 20, terrainValues[x][y]);
+        threeDCanvas.vertex(x * 50, (y + 1) * 20, terrainValues[x][y]);
+      }
+      threeDCanvas.endShape();
+    }
+
+    threeDCanvas.pop();
   };
 
   // make the background looks like in the North Pole
   // linearGradient is not p5.js function, this is WebAPI function
   // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/createLinearGradient
-
   let drawGradientBackground = function () {
     let gradient = drawingContext.createLinearGradient(
       0,
@@ -137,64 +201,5 @@ class Star {
     this.#origin.y = newY - this.#size / 2;
     this.#oppositeCorner.y = newY + this.#size / 2;
     this.#center.y = newY;
-  }
-}
-
-// same Mountain class as ITP1 game project
-class Mountain {
-  #x;
-  #y;
-  #width;
-  #height;
-
-  constructor(x, y, size) {
-    this.#x = x;
-    this.#y = y;
-    this.#width = Math.max(size, 100);
-    this.#height = (this.#width * 2) / 3; // ratio between width and height
-  }
-
-  draw() {
-    fill(color(28, 47, 49));
-    triangle(
-      this.#x,
-      this.#y,
-      this.#x + this.#width,
-      this.#y,
-      this.#x + this.#width / 2,
-      this.#y - this.#height
-    );
-
-    fill(191, 191, 191);
-    beginShape(TESS);
-    vertex(this.#x + this.#width / 2, this.#y - this.#height);
-    vertex(
-      this.#x + (this.#width * 19) / 30,
-      this.#y - (this.#height * 147) / 200
-    );
-    vertex(
-      this.#x + (this.#width * 17) / 30,
-      this.#y - (this.#height * 157) / 200
-    );
-    vertex(
-      this.#x + (this.#width * 16) / 30,
-      this.#y - (this.#height * 143) / 200
-    );
-    vertex(
-      this.#x + (this.#width * 14) / 30,
-      this.#y - (this.#height * 153) / 200
-    );
-    vertex(
-      this.#x + (this.#width * 13) / 30,
-      this.#y - (this.#height * 130) / 200
-    );
-    vertex(
-      this.#x + (this.#width * 106) / 300,
-      this.#y - (this.#height * 141) / 200
-    );
-    vertex();
-    endShape();
-
-    noStroke();
   }
 }

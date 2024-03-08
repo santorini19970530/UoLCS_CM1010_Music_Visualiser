@@ -43,6 +43,8 @@ function Needles() {
 
     push();
 
+    noStroke();
+
     translate(width / 2, height / 2);
     for (let i = 0; i < this.rainbow.length; i++) {
       energy = fourier.getEnergy(
