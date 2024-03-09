@@ -67,6 +67,7 @@ function Phyllotaxis() {
   };
 
   // draw the tree
+  // this is recursion, until n = 0
   this.drawTree = function (
     length,
     angle = 37,
@@ -85,6 +86,7 @@ function Phyllotaxis() {
       stroke(color(9, 255, 0));
     }
 
+    // ask the turtle to move forward (for drawing)
     footprint(t.forward(length));
 
     if (n > 0) {
@@ -162,26 +164,29 @@ class Turtle {
     this.stateStack = [];
   }
 
+  // return the location of the turtle
   coordinate() {
     return this.coordinateVector.copy();
   }
 
+  // ask the turgle more forward (can backword)
+  // return a vector with from and destination coordinates
   forward(length) {
     const from = this.coordinate();
-
     const v = p5.Vector.mult(this.headingVector, length);
 
     this.coordinateVector.add(v);
-
     const to = this.coordinate();
 
     return { from, to };
   }
 
+  // ask the turtle to turn
   turn(angle) {
     this.headingVector.rotate(angle);
   }
 
+  // store steps into memory stack
   pushStep() {
     this.stateStack.push({
       x: this.coordinateVector.x,
@@ -190,6 +195,7 @@ class Turtle {
     });
   }
 
+  // remove from the memory stack the steps
   popStep() {
     const { x, y, heading } = this.stateStack.pop();
 

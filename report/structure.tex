@@ -1,0 +1,131 @@
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\usepackage{amsmath, amsfonts, amssymb, array, mathtools} % Math packages
+\usepackage{setspace}
+\usepackage{titlesec}
+\usepackage{graphicx}  % long division
+\usepackage[normalem]{ulem}    % double underline
+\usepackage{hyperref} % hyperlink
+\usepackage{gensymb}  % degree symbol
+\usepackage{bookmark}
+\usepackage{listings}
+\usepackage{blindtext}
+\usepackage{tipa}
+\usepackage[utf8]{luainputenc}
+\usepackage{fdsymbol}
+\usepackage{newunicodechar}
+\usepackage{clrscode3e}
+
+%----------------------------------------------------------------------------------------
+%	DOCUMENT MARGINS
+%----------------------------------------------------------------------------------------
+
+\usepackage{fancyhdr}
+
+% Required for adjusting page dimensions and margins
+\usepackage{geometry}
+
+\geometry{
+	paper=a4paper, % Paper size, change to letterpaper for US letter size
+	top=2cm, % Top margin
+	bottom=2cm, % Bottom margin
+	left=2cm, % Left margin
+	right=2cm, % Right margin
+	% headheight=16pt, % Header height
+	footskip= 1cm, % Space from the bottom margin to the baseline of the footer
+	headsep= 1em, % Space from the top margin to the baseline of the header
+	% showframe, % Uncomment to show how the type block is set on the page
+  includeheadfoot,
+}
+
+%----------------------------------------------------------------------------------------
+%	PARAGRAPH SPACING
+%----------------------------------------------------------------------------------------
+
+\parindent 0px
+\def\mathbi#1{\textbf{\emph #1}}
+\newcommand\tab[1][1cm]{\hspace*{#1}}
+\titlespacing{\section}{0pt}{5pt}{5pt}
+\linespread{1}
+\setstretch{1.5}
+
+%----------------------------------------------------------------------------------------
+% CIRCLED CHARACTER
+%----------------------------------------------------------------------------------------
+
+\usepackage{tikz, etoolbox}
+
+\newcommand{\circled}[2][]{%
+  \tikz[baseline=(char.base)]{%
+    \node[shape = circle, draw, inner sep = 1pt]
+    (char) {\phantom{\ifblank{#1}{#2}{#1}}};%
+    \node at (char.center) {\makebox[0pt][c]{#2}};}}
+\robustify{\circled}
+
+%----------------------------------------------------------------------------------------
+% COLORING AND CODE BLOCK
+%----------------------------------------------------------------------------------------
+
+\usepackage{color}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+  language=Java,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breakatwhitespace=true
+  tabsize=3
+}
+
+
+%----------------------------------------------------------------------------------------
+% CODING 
+%----------------------------------------------------------------------------------------
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=4
+}
+
+% JavaScript
+\lstdefinelanguage{JavaScript}{
+  morekeywords={typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break, undefined},
+  morecomment=[s]{/*}{*/},
+  morecomment=[l]//,
+  morestring=[b]",
+  morestring=[b]'
+}
+
+\lstset{style=mystyle}

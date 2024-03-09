@@ -1,4 +1,4 @@
-// displays the playback button.
+/* displays the playback button. */
 
 class PlaybackAndPauseDrawStrategy {
   constructor() {
@@ -40,7 +40,7 @@ class PlaybackAndPauseDrawStrategy {
   }
 }
 
-// check the hit check
+/* check the hit check */
 class PlaybackAndPauseHitCheckStrategy {
   constructor() {
     this.x = null;

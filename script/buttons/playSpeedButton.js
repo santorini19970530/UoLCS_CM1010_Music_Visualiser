@@ -1,4 +1,4 @@
-// displays the play speed buttons
+/* displays the play speed buttons */
 class PlaySpeedDrawStrategy {
   constructor(type) {
     this.x = null;
@@ -45,8 +45,8 @@ class PlaySpeedDrawStrategy {
   }
 }
 
-// check hit of play speed buttons
-// then regulate the play speed in accordance to the button pressed
+/* check hit of play speed buttons
+ then regulate the play speed in accordance to the button pressed */
 class PlaySpeedHitChcekStrategy {
   constructor(type) {
     this.x = null;
@@ -68,7 +68,6 @@ class PlaySpeedHitChcekStrategy {
       playSpeed =
         this.buttonType == "faster" ? playSpeed + 0.1 : playSpeed - 0.1;
       if (sound.isPlaying()) sound.rate(playSpeed);
-      console.log(playSpeed);
 
       return true;
     }

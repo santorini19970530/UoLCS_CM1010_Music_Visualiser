@@ -46,6 +46,10 @@ var playVolume;
 var fourier;
 // GoldSmiths, UoL logo
 var logo, logo2;
+// variables for the fonts
+var fontMedium;
+var fontDigit;
+var fontLyrics;
 // variables for the music player
 var canvas = null;
 var divPanel;
@@ -57,6 +61,8 @@ const starsAmountMax = 40;
 var stars = [];
 // detect whether the mouse is pressed
 var mouseOnHold = false;
+// record the time before calling the fifth visual
+var fifthVisualTime;
 
 function preload() {
   // preload the sound information
@@ -68,6 +74,7 @@ function preload() {
     "./assets/viviz_day_by_day.mp3",
     "./assets/gfriend_sunrise.mp3",
     "./assets/gfriend_rainbow.mp3",
+    "./assets/gfriend_mago.mp3",
   ];
 
   soundSource.forEach((source, i) => {
@@ -88,6 +95,7 @@ function preload() {
   fontDigit = loadFont(
     "../fonts/Major_Mono_Display/MajorMonoDisplay-Regular.ttf"
   );
+  fontLyrics = loadFont("../fonts/Black_Han_Sans/BlackHanSans-Regular.ttf");
 }
 
 function setup() {
@@ -122,6 +130,7 @@ function setup() {
   vis.add(new WavePattern());
   vis.add(new Needles());
   vis.add(new Phyllotaxis());
+  vis.add(new Disco());
 
   // instantiate the fft object
   fourier = new p5.FFT();
@@ -129,8 +138,9 @@ function setup() {
   // set the sound setting
   playSpeed = 1;
 
-  // prepare stars for the first visual
-  vis.selectedVisual.setup();
+  // prepare stars for the first and fifth visual
+  vis.visuals[0].setup();
+  vis.visuals[4].setup();
 
   // make all angles as degree
   angleMode(DEGREES);

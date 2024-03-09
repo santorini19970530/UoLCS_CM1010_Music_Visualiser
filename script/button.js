@@ -1,4 +1,4 @@
-// Button class to contain the basic information of each buttons
+/* Button class to contain the basic information of each buttons */
 
 class Button {
   // private

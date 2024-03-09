@@ -1,4 +1,4 @@
-// constructor function to draw the status bars (originally needles)
+/* constructor function to draw the status bars (originally needles) */
 
 function Needles() {
   // private
@@ -47,13 +47,15 @@ function Needles() {
 
     translate(width / 2, height / 2);
     for (let i = 0; i < this.rainbow.length; i++) {
+      // getEnergy with two digit variables will get averaged amplitude of range of sound frequencies
       energy = fourier.getEnergy(
         this.frequencyBins[i].lower,
         this.frequencyBins[i].upper
-      ); // getEnergy with two digit variables will get averaged amplitude of range of sound frequencies
+      );
 
       let maxAngle = map(energy, 0, 255, 0, 360);
 
+      // draw the status bar out, from zero energy to energy of certain range of music at certain time
       for (let alpha = 0; alpha <= maxAngle; alpha++) {
         fill(this.rainbow[i]);
         let r = radius + i * 30;

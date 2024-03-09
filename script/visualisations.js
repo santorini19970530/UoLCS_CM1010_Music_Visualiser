@@ -2,15 +2,17 @@
 
 function Visualisations() {
   // public
+
   // array to store visualisations
   this.visuals = [];
+
   // currently selected vis. set to null until vis loaded in
   this.selectedVisual = null;
 
   // add a new visualisation to the array, param vis: a visualisation object
+  // if selectedVisual is null set the new visual as the current visualiation
   this.add = function (vis) {
     this.visuals.push(vis);
-    // if selectedVisual is null set the new visual as the current visualiation
     if (this.selectedVisual == null) this.selectVisual(vis.name);
   };
 

@@ -1,0 +1,78 @@
+%% --- Topic 9 Log Sheet --- %%
+\chapter*{Topic 9 Log Sheet}
+
+\section*{Project Title}
+
+Music Visualisation Project
+
+\section*{Topic}
+
+Topic 9 - Testing for Stability
+
+\section*{What progress have you made this topic?}
+
+\subsection*{1. Add terrain for the first visual}
+
+\begin{itemize}
+  \item add a 3D terrain drawn onto another canvas
+  \item the wave pattern moves in accordance on spectrum sound energy
+\end{itemize}
+
+\subsection*{2. Arrange tests}
+
+\subsection*{3. Add light beams for the fifth visual}
+
+\section*{What problems have you faced and were you able to solve them?}
+
+\subsection*{1. for the 3D terrain canvas}
+
+\begin{itemize}
+  \item p5.js is preset to be using 2D drawing platform, which is P2D platform
+  \item adding terrain, which includes z-axis motion, needs a 3D canvas WEBGL
+  \item drawings on 2D cannot be combined with 3D drawings, one more canvas is needed to contain the 3D items
+  \item hence, in the program, I have added another threeDCanvas which uses WEBGL mechanism and add the terrain items onto
+  \item createGraphics can be used to attach this extra canvas onto the drawing platform
+\end{itemize}
+
+\subsection*{2. for the 3D terrain build up}
+
+\begin{itemize}
+  \item 3D terrain is actually manipulation of x, y, z coordinates
+  \item in this project, x coordinates represents the spectrum position (0 to 1024)
+  \item y coordinates represents the number of vertices
+  \item z coordinates represents the amplitude of sound with that specific spectrum position
+  \item these three factors makes each of the vertex points on the terrain
+  \item three adjacent vertices forms one surface, and many surfaces forms the complete terrain
+\end{itemize}
+
+\subsection*{3. for the light beams}
+
+\section*{Are you on target to successfully complete your project? If you aren’t on target, how will you address the issue?}
+
+\begin{itemize}
+  \item My project is still behind the schedule
+  \item adding 3D terrain and the other project were filling up my schedule
+  \item the visuals addups have been finished, in the future weeks I will continue testing the app and continuing the report
+\end{itemize}
+
+\section*{What are you planning to do over the next few weeks?}
+
+\begin{itemize}
+  \item continue testing the project
+  \item looking for chances to upgrade the visuals more
+  \item complte the report
+\end{itemize}
+
+\section*{ Appendix - The summary of code I have added}
+
+\subsection*{Additional canvas for the 3D terrain}
+
+Below is the code added for attaching 3D canvas onto divPanel()
+
+\lstinputlisting[language=JavaScript]{./Topic9/script1.js}
+
+\subsection*{Building up the 3D canvas}
+
+Below code shows how the terrain is being formed from 3D canvas
+
+\lstinputlisting[language=JavaScript]{./Topic9/script2.js}

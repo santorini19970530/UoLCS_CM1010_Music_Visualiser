@@ -1,0 +1,137 @@
+%% --- Topic 8 Log Sheet --- %%
+\chapter*{Topic 8 Log Sheet}
+
+\section*{Project Title}
+
+Music Visualisation Project
+
+\section*{Topic}
+
+Topic 8 - Async and Callbacks
+
+\section*{What progress have you made this topic?}
+
+\subsection*{1. Update the visuals}
+
+\begin{itemize}
+  \item Visual 3 - Update the progress bars from five colors to seven colors
+  \item Visual 4 - Add two trees which branched varied by the music
+  \item Visual 5 - Add the cocktail (with bubbles) and lyrics for the visual
+\end{itemize}
+
+\subsection*{2. Preparing the test cases}
+
+\begin{itemize}
+  \item set up integration test and unit test cases
+\end{itemize}
+
+\subsection*{3. Prepare the report}
+
+\begin{itemize}
+  \item study the questions and items to be replied for the report
+\end{itemize}
+
+\section*{What problems have you faced and were you able to solve them?}
+
+\subsection*{1. Visualising the music frequency map}
+
+\begin{itemize}
+  \item in The Rainbow visual, the fourier.getEnergy function has five string arguments, as per p5.sound documentation
+  \item but the rainbow has seven colors
+  \item to make the sound frequency spectrum divide by seven spectrum, another argument input method has to be complied
+  \item the getEnergy(min, max) input method will generates out energy of sound between min frequency and max frequency
+  \item by dividing human-recognisable sound frequencies into seven ranges (ignore 16kHz - 32kHz which is too high for my songs), sound energy can be extracted and being mapped onto the status bar of each of the seven colors
+  \item hence the rainbow can be generated
+\end{itemize}
+
+\subsection*{2. Adding the trees}
+
+\begin{itemize}
+  \item in Garden visual, since the original phyllotaxis part is not filling in the screen
+  \item I have added two trees which is out of the mid-term project plan
+  \item here, and old programming language Logo is being remake (in the Turtle class)
+    \begin{itemize}
+      \item a turtle can leave a track (this is drawing) when it is walking on the screen
+      \item the turtle can move forward, backward and turn for each step
+      \item more detail can make reference to \url{https://en.wikipedia.org/wiki/Logo_(programming_language)}
+    \end{itemize}
+  \item data structure stack is used to store its steps, for moving backward for drawing branches in other way
+  \item hence, this tree, with two branches on each node, can be donw by making the turtle to and fro, with the use of stack pop and stack push functions
+  \item below shows recursion codes of the movement of turtle movements
+\end{itemize}
+
+\subsection*{3. Adding lyrics}
+
+\begin{itemize}
+  \item For making the Disco visual more attaractive, I have added the lyrics show, on the top of the cocktail cup
+  \item this is actually calling p5.js loadTable function (this is for data visualisation app), to read in the lyrics and their display time (in ms)
+  \item As the song is Korean song, one more font is being used to display the lyrics
+\end{itemize}
+
+\section*{Are you on target to successfully complete your project? If you aren’t on target, how will you address the issue?}
+
+\begin{itemize}
+  \item My project is a little bit behind the schedule
+  \item the terrain in the first visual will be finished in next log report
+  \item the test cases and report will start from next log
+  \item Async and Await is being delayed due to the making of other visual parts
+\end{itemize}
+
+\section*{What are you planning to do over the next few weeks?}
+
+\begin{enumerate}
+  \item Visual 1 - North Pole Light
+    \begin{itemize}
+      \item remove the Mountain visuals
+      \item replace by the mountains to the terrain the reflect sound property
+    \end{itemize}
+  \item Visual 2 - The Sun
+    \begin{itemize}
+      \item update of this visual has almost been finished
+    \end{itemize}
+  \item Visual 3 - The Rainbow
+    \begin{itemize}
+      \item update of this visual has almost been finished
+    \end{itemize}
+  \item Visual 4 - Garden
+    \begin{itemize}
+      \item update of this visual has almost been finished
+    \end{itemize}
+  \item Visual 5 - Disco
+    \begin{itemize}
+      \item cocktail cup, bubble and lyrics has finished
+      \item in next steps I will add the disco lights
+    \end{itemize}
+  \item Visual 6 - Performance Platform
+    \begin{itemize}
+      \item after review the project scope and project timeline, this has to be withdrawn from my production plan
+    \end{itemize}
+\end{enumerate}
+
+Except from buinding up the visuals and the mp3 player, I will also arrange the following
+
+\begin{itemize}
+  \item add Async and Await onto visuals
+  \item arrange tests to the project
+  \item prepare the report
+\end{itemize}
+
+\section*{ Appendix - The summary of code I have added}
+
+\subsection*{Make the Rainbow visual more complete}
+
+Below is the capture of The Rainbow that capture sound energy within assigned frequencies spectrum, into energy value for rainbow visual.
+
+\lstinputlisting[language=JavaScript]{./Topic8/script1.js}
+
+\subsection*{Dawing of tree in Garden visual}
+
+Below is the capture of how the tree is being drawn by Logo Turtle.
+
+\lstinputlisting[language=JavaScript]{./Topic8/script2.js}
+
+\subsection*{Showing the Lyrics}
+
+Below is the code for loading csv file to get lyrics and then display them in the Disco visual
+
+\lstinputlisting[language=JavaScript]{./Topic8/script3.js}

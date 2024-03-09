@@ -1,4 +1,5 @@
 // music player frame object
+// buttons with functions are not mentioned in this file
 // the player is divided by upper and lower part
 // each part are having each own items to be drawn
 
@@ -128,9 +129,9 @@ const TimeDisplay = function (y) {
     textSize(20);
     textStyle(BOLD);
     textFont(fontDigit);
-    // currentTime() : returns Number: currentTime of the soundFile in seconds
+    // musicCurrentTime() : returns Number: currentTime of the soundFile in seconds
     musicCurrentTime = sounds[playingSound].currentTime();
-    // duration() : returns Number: The duration of the soundFile in seconds
+    // musicDuration() : returns Number: The duration of the soundFile in seconds
     musicDuration = sounds[playingSound].duration();
 
     text(

@@ -1,4 +1,4 @@
-//Constructor function to handle the onscreen menu, keyboard and mouse controls
+/* Constructor function to handle the onscreen menu, keyboard and mouse controls */
 
 class ControlsAndInput {
   constructor() {
@@ -17,6 +17,7 @@ class ControlsAndInput {
         new PlaybackAndPauseDrawStrategy(),
         new PlaybackAndPauseHitCheckStrategy()
       ),
+
       // playspeed buttons displayed in both side of th playback button
       fastForwardButton: new Button(
         divPanel.size().width / 2 + 100,
@@ -26,6 +27,7 @@ class ControlsAndInput {
         new PlaySpeedDrawStrategy("faster"),
         new PlaySpeedHitChcekStrategy("faster")
       ),
+
       slowerButton: new Button(
         divPanel.size().width / 2 - 200,
         height - 80,
@@ -120,6 +122,16 @@ class ControlsAndInput {
                   sound.loop();
                 }
                 break;
+              case 4:
+                if (playingSound != 7) {
+                  sound.stop();
+                  playingSound = 7;
+                  sound = sounds[playingSound];
+                  fifthVisualTime = millis();
+                  sound.setVolume(playVolume);
+                  sound.play(); // just play for one time
+                }
+                break;
               default:
                 break;
             }
@@ -154,7 +166,19 @@ class ControlsAndInput {
         }
         break;
 
-      // m button (no shift) - show the menu
+      // "f" button (no shift) - play the music faster
+      case 70:
+        playSpeed += 0.1;
+        if (sound.isPlaying()) sound.rate(playSpeed);
+        break;
+
+      // "s" button (no shift) - play the music slower
+      case 83:
+        playSpeed -= 0.1;
+        if (sound.isPlaying()) sound.rate(playSpeed);
+        break;
+
+      // "m" button (no shift) - show the menu
       case 77:
         this.menuDisplayed = !this.menuDisplayed;
         break;

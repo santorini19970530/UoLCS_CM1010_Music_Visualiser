@@ -1,5 +1,5 @@
-// control the volumes
-// since the p5.js slider can only be styled using CSS code, self creating another one would be better for styling
+/* control the volumes
+since the p5.js slider can only be styled using CSS code, self creating another one would be better for styling */
 
 class VolumeControlDrawStrategy {
   constructor() {
@@ -28,9 +28,9 @@ class VolumeControlDrawStrategy {
   }
 }
 
-// check hit of volume control buttons
-// then regulate the volume of music play in accordance to the button pressed
-// also the volume will be restricted in a limit of range
+/* check hit of volume control buttons
+ then regulate the volume of music play in accordance to the button pressed
+ also the volume will be restricted in a limit of range */
 class VolumeControlCheckStrategy {
   constructor() {
     this.x = null;
@@ -40,7 +40,6 @@ class VolumeControlCheckStrategy {
   }
 
   // checks for clicks on the button, starts or pauses playback, returns true if clicked false otherwise.
-  //
   hitCheck = function () {
     // range of x and y that is considered as button
     let x1 = this.x - 20;
@@ -48,6 +47,7 @@ class VolumeControlCheckStrategy {
     let y1 = this.y - 20;
     let y2 = this.y + this.height + 20;
 
+    // nothing is done when mouse press on the volume control slider
     if (mouseX > x1 && mouseX < x2 && mouseY > y1 && mouseY < y2) {
       return true;
     }
