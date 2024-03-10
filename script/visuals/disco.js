@@ -10,7 +10,7 @@ function Disco() {
   );
   let bubbles = []; // bubbles in the cocktail
   let lightPlate = new LightPlate(width / 2, height * 0.2);
-  let spotLight = new SpotLight(width / 2, height / 2, 300, 2);
+  let discoBackground = new DiscoBackground();
 
   // public
   this.name = "disco";
@@ -34,7 +34,7 @@ function Disco() {
     let wave = fourier.waveform();
     let spectrum = fourier.analyze();
 
-    drawVarientBackground();
+    discoBackground.draw();
 
     cocktailCup.draw();
 
@@ -66,28 +66,6 @@ function Disco() {
 
     // draw the lyric plate
     lightPlate.draw();
-
-    // draw the spotlight
-    spotLight.draw();
-  };
-
-  // make the background looks like near the sun
-  // linearGradient is not p5.js function, this is WebAPI function
-  // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/createLinearGradient
-
-  let drawVarientBackground = function () {
-    let gradient = drawingContext.createLinearGradient(
-      0,
-      50,
-      width,
-      height - 50 - 120
-    );
-    gradient.addColorStop(0, color(255, 0, 0));
-    gradient.addColorStop(0.5, color(0, 255, 0));
-    gradient.addColorStop(1, color(0, 0, 255));
-    drawingContext.fillStyle = gradient;
-
-    rect(0, 50, width, height - 50 - 120);
   };
 }
 
@@ -330,33 +308,106 @@ class LightPlate {
   }
 }
 
-class SpotLight {
+// make the background looks like near the sun
+// linearGradient is not p5.js function, this is WebAPI function
+// https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/createLinearGradient
+class DiscoBackground {
   #position;
-  #radius;
-  #expansion;
-  #displacement;
+  #color_spectrum_divider;
+  #red_factor;
+  #blue_factor;
+  #green_factor;
 
-  constructor(x, y, radius = 300, expansion = 1) {
-    this.#position = { x: x, y: y };
-    this.#radius = radius;
-    this.#displacement = { x: 1, y: 1 };
-    this.#expansion = expansion;
+  constructor() {
+    this.#position = { x: 0, y: 50 };
+    this.#color_spectrum_divider = 0.5;
+    this.#red_factor = 255;
+    this.#blue_factor = 255;
+    this.#green_factor = 255;
   }
 
-  draw() {
-    /*blendMode(DIFFERENCE);
-    image(
-      "../images/spotlight.png",
-      this.#position.x - this.#radius / 2,
-      this.#position.y - this.#radius / 2,
-      this.#radius * this.#expansion,
-      this.#radius * this.#expansion
+  // draw the background
+  async draw() {
+    let gradient = drawingContext.createLinearGradient(
+      this.#position.x,
+      this.#position.y,
+      width,
+      height - 50 - 120
     );
-    blendMode(DARKEST);*/
+
+    gradient.addColorStop(0, color(this.#red_factor, 0, 0));
+    gradient.addColorStop(
+      this.#color_spectrum_divider,
+      color(0, this.#green_factor, 0)
+    );
+    gradient.addColorStop(1, color(0, 0, this.#blue_factor));
+
+    drawingContext.fillStyle = gradient;
+    rect(this.#position.x, this.#position.y, width, height - 50 - 120);
+
+    let result_red = await this.changeRed();
+    let result_blue = await this.changeBlue();
+    let result_green = await this.changeGreen();
+    let result = await this.changeSpectrum();
   }
 
-  move() {
-    this.#position.x = min(this.#position.x, 960);
-    this.#position.x = max(this.#position.x, 0);
+  changeSpectrum() {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        this.#color_spectrum_divider = map(
+          fourier.getEnergy("mid"),
+          0,
+          255,
+          0.2,
+          0.8
+        );
+        resolve();
+      }, 5000);
+    });
+  }
+
+  changeRed() {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        this.#red_factor = map(
+          noise(fourier.getEnergy("lowMid")),
+          0,
+          1,
+          200,
+          255
+        );
+        resolve();
+      }, 2000);
+    });
+  }
+
+  changeBlue() {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        this.#blue_factor = map(
+          noise(fourier.getEnergy("highMid")),
+          0,
+          1,
+          200,
+          255
+        );
+        resolve();
+      }, 3000);
+    });
+  }
+
+  changeGreen() {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        this.#green_factor = map(
+          noise(fourier.getEnergy(16, 32)),
+          0,
+          1,
+          210,
+          255
+        );
+        resolve();
+      }, 4000);
+    });
   }
 }

@@ -66,14 +66,13 @@ class ControlsAndInput {
     // when number keys are pressed, select the visuals
 
     switch (keycode) {
-      // space button - play and pause the music
+      // space bar - play and pause the music
       case 32:
         if (sound.isPlaying()) sound.pause();
         else {
           sound.loop();
           sound.rate(playSpeed);
         }
-
         controls.playing = !controls.playing;
         break;
 
