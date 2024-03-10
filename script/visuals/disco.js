@@ -345,12 +345,14 @@ class DiscoBackground {
     drawingContext.fillStyle = gradient;
     rect(this.#position.x, this.#position.y, width, height - 50 - 120);
 
+    // await for sequencing the processes
     let result_red = await this.changeRed();
     let result_blue = await this.changeBlue();
     let result_green = await this.changeGreen();
     let result = await this.changeSpectrum();
   }
 
+  // promise part
   changeSpectrum() {
     return new Promise((resolve, reject) => {
       setTimeout(() => {

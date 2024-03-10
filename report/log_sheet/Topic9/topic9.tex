@@ -20,7 +20,28 @@ Topic 9 - Testing for Stability
 
 \subsection*{2. Arrange tests}
 
-\subsection*{3. Add light beams for the fifth visual}
+\begin{itemize}
+  \item during this bi-week I started tesing the project with the introduction by IBM \url{https://www.ibm.com/topics/software-testing}
+  \item i started by acceptance testing and code review
+    \begin{itemize}
+      \item \textbf{Acceptance testing} means Verifying whether the whole system works as intended
+      \item \textbf{Code review} means Are an effective means to confirm that new and modified software is following an organization’s coding standards and adheres to its best practices.
+    \end{itemize}
+  \item i have noted the test cases in excel for recording
+\end{itemize}
+
+\subsection*{3. Add light for the fifth visual}
+
+\begin{itemize}
+  \item one of the topic of the lecture video is async await and promise
+  \item for the lighting of visual five, I have applied these learnt techniques onth manipulating the background
+    \begin{itemize}
+      \item after two seconds of playing, the red part of background will be affected by fouier.getEnergy value
+      \item after three more seconds, the blue part will also be affected by fourier.getEnergy value
+      \item after four more seconds, the green part will also be affected by fourier.getEnergy value
+      \item finally, after five seconds, the background (red-green-blue) ratio will be affected by fourier.getEnergy value
+    \end{itemize}
+\end{itemize}
 
 \section*{What problems have you faced and were you able to solve them?}
 
@@ -45,13 +66,20 @@ Topic 9 - Testing for Stability
   \item three adjacent vertices forms one surface, and many surfaces forms the complete terrain
 \end{itemize}
 
-\subsection*{3. for the light beams}
+\subsection*{3. for the lighting}
+
+\begin{itemize}
+  \item i have learnd async await promise for managing visual performance time
+  \item in fact, the similar time management process has been applied in my ITP1 project, for retriving data from json data file
+  \item data from json file has to be all read before other processes can be done
+  \item even though there were no async await promise keywords in my ITP1 project, the concept has been applied
+\end{itemize}
 
 \section*{Are you on target to successfully complete your project? If you aren’t on target, how will you address the issue?}
 
 \begin{itemize}
   \item My project is still behind the schedule
-  \item adding 3D terrain and the other project were filling up my schedule
+  \item adding 3D terrain and manipulation of async were filling up my schedule
   \item the visuals addups have been finished, in the future weeks I will continue testing the app and continuing the report
 \end{itemize}
 
@@ -59,7 +87,7 @@ Topic 9 - Testing for Stability
 
 \begin{itemize}
   \item continue testing the project
-  \item looking for chances to upgrade the visuals more
+  \item looking for chances to upgrade the visuals
   \item complte the report
 \end{itemize}
 
@@ -76,3 +104,9 @@ Below is the code added for attaching 3D canvas onto divPanel()
 Below code shows how the terrain is being formed from 3D canvas
 
 \lstinputlisting[language=JavaScript]{./Topic9/script2.js}
+
+\subsection*{Async Await and Promise application}
+
+Below code illustrate how I have used async await and promise to manage time of changing background color
+
+\lstinputlisting[language=JavaScript]{./Topic9/script3.js}

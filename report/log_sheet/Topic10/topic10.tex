@@ -7,125 +7,46 @@ Music Visualisation Project
 
 \section*{Topic}
 
-Topic 7 - Extending the Apps
+Topic 10 - Testing with users
 
 \section*{What progress have you made this topic?}
 
-\subsection*{1. Update the MP3 player}
+\subsection*{1. Arrange software testing}
 
-  \begin{itemize}
-    \item volume control has been added onto the mp3 player
-    \begin{itemize}
-      \item instead of using slider, which needs CSS code for styling, I have created two rectangles to represent the sound volume
-    \end{itemize}
-    \item change of key configs
-    \begin{itemize}
-      \item "m" for popping out or hiding the visual selection menu
-      \item space bar's new use, for playing and pausing music
-      \item "f" key for playing faster, "s" key for playing slower
-      \item use switch...case block to tidy up the keyPressed button selections
-    \end{itemize}
-    \item specified some of the visuals' music to play
-    \begin{itemize}
-      \item when the visual is started, its relevant music will start at the same time
-    \end{itemize}
-  \end{itemize}
-
-\subsection*{2. Update the backgrounds}
-
-\begin{itemize}
-  \item the same background coloring mechanism as the first visual
-  \item visual 2 (The Sun) - add circular background with fixed color pattern
-  \item visual 3 (The Rainbow) - add diagonal background with color varied with the fourier.getEnergy values
-  \item visual 4 (The Garden) - add diagonal background with some variations on the green part
-\end{itemize}
-
-\subsection*{3. Add one more visual}
-
-\begin{itemize}
-  \item One more visual (The Disco) has been added, with adding background
-\end{itemize}
-
-\subsection*{4. Tidy up the code}
-
-\begin{itemize}
-  \item sketch.js has contain codes for initiating the star array (for the first visual)
-  \item to meke the code more easy to follow, I have move those into wavepattern.js object
-\end{itemize}
+\subsection*{2. Prepare the report}
 
 \section*{What problems have you faced and were you able to solve them?}
 
-\subsection*{1. Volume control}
+\subsection*{1. Lack of resources for complete software testing}
 
 \begin{itemize}
-  \item I want to have a new volume control on the player
-  \item slider can do this, but styling needs CSS code
-  \item I want to avoid CSS code in the canvase (i.e. try using p5.js code as much as I can)
-  \item therefore, I made two rectangles to relace the slider, with adding arrow up and arrow down buttons to control the volume
+  \item for the real world environment of software production, many resources (human and software) are needed to test a software
+  \item since there are many test cases needed to testify the app
+  \item due to resource scale proble, I have sampled the test cases and select importand marginal values for testing
+\end{itemize}
+
+\subsection*{2. Traceability between project functionalities and test cases}
+
+\begin{itemize}
+  \item tracing beterrn the script functions with the test cases are one of the challenges
+  \item since one function will generate many test cases, which cause a great challenge of managing the cases
+  \item I am tryin to use Excel to manage and link the test cases to ensure that they are well linked
+  \item in case the software get compliance problem, the failure can tnen be traced to the test cases and codes for looking into root causes
 \end{itemize}
 
 \section*{Are you on target to successfully complete your project? If you aren’t on target, how will you address the issue?}
 
 \begin{itemize}
-  \item My project is a little bit behind the schedule
-  \item It is because I looked for the web for studying methods of constructing the MP3 player and the music visualisation in more time effective and beautiful way
-  \item starting on next week, I will be focusing the visualisations 1 to 4, for meeting the project progress
+  \item my project has covered all topics mentioned in the lecture videos
+  \item expansion of visuals and the mp3 player framework are all met
+  \item except that the last visual mentioned in the project has been eliminated
+  \item that is a visual for about three minute song, I am planning to add several visuals in-between the music, just make this like a background visualisation on kpo performance
+  \item this has been eliminated out from the plan due to time resources issue, this will be treated as future development of this music visualisation project
 \end{itemize}
 
 \section*{What are you planning to do over the next few weeks?}
 
-\begin{enumerate}
-  \item Visual 1 - North Pole Light
-    \begin{itemize}
-      \item remove the Mountain visuals
-      \item replace by the mountains to the terrain the reflect sound property
-    \end{itemize}
-  \item Visual 2 - The Sun
-    \begin{itemize}
-      \item update of this visual has almost been finished
-    \end{itemize}
-  \item Visual 3 - The Rainbow
-    \begin{itemize}
-      \item the background update has finished
-      \item need to update the progress circular bars from five colors into seven colors
-    \end{itemize}
-  \item Visual 4 - Garden
-    \begin{itemize}
-      \item the background has become green
-      \item i have studied more on my reference book, one more object (tree) can be added next week, to make the visual more motion
-    \end{itemize}
-  \item Visual 5 - Disco
-    \begin{itemize}
-      \item this is an additional visual
-      \item I am aiming to add a cup of cocktail, then in the middle of song some light beans shine
-      \item initial stage (building the functional constructor for this visual, and adding background) has finished
-      \item in next steps I will add the cup, cocktail with bubble, and disco lights
-    \end{itemize}
-  \item Visual 6 - Performance Platform
-    \begin{itemize}
-      \item Review of this visual for project additional visual is in progress
-      \item it includes the workload, time allowed for this part
-    \end{itemize}
-\end{enumerate}
-
-Except from buinding up the visuals and the mp3 player, I will also arrange the following
-
 \begin{itemize}
-  \item add Async and Await onto visuals
-  \item arrange tests to the project
+  \item keep testing the project
   \item prepare the report
 \end{itemize}
-
-\section*{ Appendix - The summary of code I have added}
-
-\subsection*{Additional MP3 player codes}
-
-Below is the capture from the MP3 player sound control slide
-
-\lstinputlisting[language=JavaScript]{./Topic7/script1.js}
-
-\subsection*{Sample code of visual backgrounds}
-
-Below is capture from the wavepattern.js
-
-\lstinputlisting[language=JavaScript]{./Topic7/script2.js}
