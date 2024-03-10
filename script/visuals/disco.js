@@ -10,6 +10,7 @@ function Disco() {
   );
   let bubbles = []; // bubbles in the cocktail
   let lightPlate = new LightPlate(width / 2, height * 0.2);
+  let spotLight = new SpotLight(width / 2, height / 2, 300, 2);
 
   // public
   this.name = "disco";
@@ -23,7 +24,7 @@ function Disco() {
         new Bubble(
           random(range.x.min, range.x.max),
           random(range.y.min, range.y.max),
-          20
+          30
         )
       );
   };
@@ -47,22 +48,27 @@ function Disco() {
 
       bubble.draw();
 
-      if (currentPos.y < range.y.max)
+      // bubbles can float some part on water surface
+      if (currentPos.y < range.y.max - 5)
         bubble.update(
           currentPos.x,
           currentPos.y + bubbleAcceleration,
           bubble.getRadius()
         );
+      // but cannot lower than the cup container part
       else
         bubble.update(
           random(range.x.min, range.x.max),
-          range.y.min,
-          map(fourier.getEnergy("lowMid"), 0, 255, 19, 35)
+          range.y.min + 5,
+          map(fourier.getEnergy("lowMid"), 0, 255, 19, 30)
         );
     });
 
     // draw the lyric plate
     lightPlate.draw();
+
+    // draw the spotlight
+    spotLight.draw();
   };
 
   // make the background looks like near the sun
@@ -288,10 +294,10 @@ class LightPlate {
 
     //translate(this.#position.x, this.#position.y);
     noFill();
-    strokeWeight(10);
+    strokeWeight(7);
     stroke(255);
     textSize(this.#fontSize);
-    textFont(fontLyrics);
+    textFont(fontFiles.keys("fontLyrics"));
     textAlign(CENTER, CENTER);
 
     for (let i = 0; i < 6; i++) {
@@ -321,5 +327,36 @@ class LightPlate {
     this.#glowFactor[2] -= random(
       map(fourier.getEnergy("treble"), 0, 255, -1, 1)
     );
+  }
+}
+
+class SpotLight {
+  #position;
+  #radius;
+  #expansion;
+  #displacement;
+
+  constructor(x, y, radius = 300, expansion = 1) {
+    this.#position = { x: x, y: y };
+    this.#radius = radius;
+    this.#displacement = { x: 1, y: 1 };
+    this.#expansion = expansion;
+  }
+
+  draw() {
+    /*blendMode(DIFFERENCE);
+    image(
+      "../images/spotlight.png",
+      this.#position.x - this.#radius / 2,
+      this.#position.y - this.#radius / 2,
+      this.#radius * this.#expansion,
+      this.#radius * this.#expansion
+    );
+    blendMode(DARKEST);*/
+  }
+
+  move() {
+    this.#position.x = min(this.#position.x, 960);
+    this.#position.x = max(this.#position.x, 0);
   }
 }

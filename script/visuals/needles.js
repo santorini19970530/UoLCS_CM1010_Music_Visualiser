@@ -102,10 +102,10 @@ function Needles() {
         push();
         let x = (tickRadius - 30) * cos(alpha - 90);
         let y = (tickRadius - 30) * sin(alpha - 90);
-        stroke(color(255, 255, 255));
-        strokeWeight(2);
+        stroke(color(200, 200, 200));
+        strokeWeight(1);
         fill(color(254, 254, 254));
-        textFont(fontDigit);
+        textFont(fontFiles.keys("fontDigit"));
         textSize(15);
         text(String(Math.floor(map(alpha, 0, 360, 0, 255))), x, y);
         pop();

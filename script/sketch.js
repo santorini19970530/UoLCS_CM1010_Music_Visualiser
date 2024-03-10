@@ -45,11 +45,9 @@ var playVolume;
 //variable for p5 fast fourier transform
 var fourier;
 // GoldSmiths, UoL logo
-var logo, logo2;
-// variables for the fonts
-var fontMedium;
-var fontDigit;
-var fontLyrics;
+var logo, logo2, spotlight;
+// font files array
+var fontFiles = [];
 // variables for the music player
 var canvas = null;
 var divPanel;
@@ -77,8 +75,15 @@ function preload() {
     "./assets/gfriend_mago.mp3",
   ];
 
-  soundSource.forEach((source, i) => {
-    sounds[i] = loadSound(source);
+  soundSource.forEach((source) => {
+    sounds.push(
+      loadSound(
+        source,
+        () => successLoadFile(source),
+        () => errorLoadFile(source),
+        () => whileLoadingFile(source)
+      )
+    );
   });
 
   sound = sounds[playingSound];
@@ -86,16 +91,59 @@ function preload() {
   playVolume = 0.1;
   sound.setVolume(playVolume);
 
-  // preload the school logos
-  logo = loadImage("../images/logo2.svg");
-  logo2 = loadImage("../images/logo.svg");
+  // preload the school logos and spotlight image
+  logo = loadImage(
+    "../images/logo2.svg",
+    () => successLoadFile("logo2.svg"),
+    () => errorLoadFile("logo2.svg")
+  );
+  logo2 = loadImage(
+    "../images/logo.svg",
+    () => successLoadFile("logo.svg"),
+    () => errorLoadFile("logo.svg")
+  );
+  spotlight = loadImage(
+    "../images/spotlight.png",
+    () => successLoadFile("spotlight.png"),
+    () => errorLoadFile("spotlight.png")
+  );
 
   // preload the font styles
-  fontMedium = loadFont("../fonts/Gabarito/static/Gabarito-Medium.ttf");
-  fontDigit = loadFont(
-    "../fonts/Major_Mono_Display/MajorMonoDisplay-Regular.ttf"
+  fontFiles = [
+    {
+      name: "fontMedium",
+      path: "../fonts/Gabarito/static/Gabarito-Medium.ttf",
+    },
+    {
+      name: "fontDigit",
+      path: "../fonts/Major_Mono_Display/MajorMonoDisplay-Regular.ttf",
+    },
+    {
+      name: "fontLyrics",
+      path: "../fonts/Black_Han_Sans/BlackHanSans-Regular.ttf",
+    },
+  ];
+
+  fontFiles.forEach((source) =>
+    loadFont(
+      source.path,
+      () => successLoadFile(source.path.split(/(\\|\/)/g).pop()),
+      () => errorLoadFile(source.path.split(/(\\|\/)/g).pop())
+    )
   );
-  fontLyrics = loadFont("../fonts/Black_Han_Sans/BlackHanSans-Regular.ttf");
+}
+
+// callbacks for ensuring the sounds are correctly loaded
+function successLoadFile(source) {
+  console.log("Success loading file " + source);
+}
+
+function errorLoadFile(source) {
+  console.error("Failed loading file " + source);
+}
+
+function whileLoadingFile(source) {
+  console.log("Loading file " + source);
 }
 
 function setup() {

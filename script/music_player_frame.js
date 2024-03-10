@@ -34,12 +34,11 @@ const UpperFrame = function () {
   let drawLogo = () => {
     push();
 
-    image(logo, 5, 5);
-    logo.resize(15, 15);
+    image(logo, 5, 5, 15, 15);
     stroke(0);
     fill(255);
     textSize(16);
-    textFont(fontMedium);
+    textFont(fontFiles.keys("fontMedium"));
     textAlign(LEFT);
     text("MUSIC VISUALISER", 30, 20);
     textAlign(CENTER);
@@ -123,12 +122,12 @@ const TimeDisplay = function (y) {
   this.draw = () => {
     push();
 
-    strokeWeight(2);
-    stroke(255);
+    strokeWeight(1);
+    stroke(200);
     fill(255);
     textSize(20);
     textStyle(BOLD);
-    textFont(fontDigit);
+    textFont(fontFiles.keys("fontDigit"));
     // musicCurrentTime() : returns Number: currentTime of the soundFile in seconds
     musicCurrentTime = sounds[playingSound].currentTime();
     // musicDuration() : returns Number: The duration of the soundFile in seconds
