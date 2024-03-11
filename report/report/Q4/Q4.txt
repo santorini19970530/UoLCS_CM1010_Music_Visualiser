@@ -1,0 +1,29 @@
+Review of Coding Process
+
+* it is thankful that lecture videos, google and Youtube tutorials are contributing the project
+
+* especially when I got difficulties on preparing 3D terrain and coding of async, these are helping me a log
+
+* improvement is still needed, on more use of async for more complicated projects
+
+* e.g. in the fifth visual, the lyrics can be moving anywhere like threads
+
+* these can be considered as future development projects
+
+User Testing
+
+* I have invited my friend to try using my app
+
+* his comment is positive, felt exciting on my works on several visualisations
+
+* he has also pointed out that such app should also be useable as mobile app, and the app should add share functions
+
+* I think these good ideas can be future updates, making my app be competitive with Spotify
+
+System Testing
+
+* I have performed testing myself for the process flow, use cases, object properties and methods
+
+* there are some improvement things, e.g. make the volume button draggable when mouse hold, or prepare selection panel for the music
+
+* these will be updated when the project would be changed to music player

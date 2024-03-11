@@ -1,0 +1,63 @@
+External sources comes from the following:
+
+(Extension version of my mid-term answer)
+
+1. The system design concepts comes from UML Diagram, which I have learnt from Head First Object-Oriented Analysis and Design ISBN : 978-0596008673
+
+2. The idea of Strategy Pattern comes from the book Design Patterns ISBN : 978-0201633610
+
+3. The music player outlook comes from Windows Media Player 11 Black Theme
+
+4. The first visual (North Pole light) is my original idea
+
+* the North Pole night and  materials come from ITP1 and my works
+
+* the background is variating background color (link - \url{https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/createLinearGradient})
+
+* this background color scheme has been added onto all visuals
+
+* the 3D terrain idea comes from Youtube \url{https://www.youtube.com/watch?v=_Tyhfpxwips}
+
+* but that video does not mention how to reflect on p5.sound, so i modifieed that into my code
+
+5. Idea of the second visual comes from GFRIEND 2019 Concert (song Sunrise) that simulates the sun shining bright. I have simplified the visual by adding two circular waveform and particles
+
+* the original tutorial \url{https://www.youtube.com/watch?v=uk96O7N1Yo0} mentioned only one waveform
+
+* I have added one more (opposite way) and make the particle colorful (color by getEnergy())
+
+6. Idea of the third visual comes from my office work
+
+* Japanese companies loves visualising target progresses by circular status bar
+
+* Example \url{https://bdastyle.net/tools/dashboard/gauge-chart.html}
+
+* You can see from the below capture that what I have done for my company in Excel format, I have applied the idea onto visualising the getEnergy() digits
+
+7. The forth visual idea comes from Youtube channel The Coding Train
+
+* link \url{https://www.youtube.com/watch?v=KWoJgHFYWxY}
+
+* I have added the getEnergy() variables to make the visual colorful.
+
+* Additional trees comes from a Taiwan book names "p5.js 演算創作", ISBN 978-626-324-435-1, Chapter 7
+
+* idea of Turtle is also coming from the same book
+
+* But Logo turtle is actually a very old programming language (make reference to \url{https://ia600605.us.archive.org/14/items/byte-magazine-1982-08/1982_08_BYTE_07-08_Logo.pdf}, P.248)
+
+* the Logo Turtle is being remade in this project, for the convenience of drawing the trees
+
+8. The fifth visual idea comes form MV of GFRIEND - MAGO
+
+* link \url{https://youtu.be/LmBYPXGqtss?si=0yJUOptoHI-BNNXi&t=46} , the 46-th second
+
+9. Conclusion
+
+* My original ideas are to visualise the music that reflects on my feeling on the songs, what I have seen from GFRIEND concerts, or apply my daily Excel works
+
+* Complex programming and system design techniques I have used are ES6 Class and Syntax, Spiral Mode of SLDC, Strategy Pattern, function constructor, etc.
+
+* Trying not to copy the code, I have digested the coding ideas and apply on extending visuals
+
+* Most of the tutorials I have seen are just white in color or not considering p5.sound as variables, hence I use getEnergy() values to make the visual colorful

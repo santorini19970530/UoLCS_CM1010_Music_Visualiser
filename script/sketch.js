@@ -45,7 +45,7 @@ var playVolume;
 //variable for p5 fast fourier transform
 var fourier;
 // GoldSmiths, UoL logo
-var logo, logo2, spotlight;
+var logo, logo2;
 // font files array
 var fontFiles = [];
 // variables for the music player
@@ -57,8 +57,6 @@ var threeDCanvas;
 // control the amount of stars
 const starsAmountMax = 40;
 var stars = [];
-// detect whether the mouse is pressed
-var mouseOnHold = false;
 // record the time before calling the fifth visual
 var fifthVisualTime;
 
@@ -101,11 +99,6 @@ function preload() {
     "../images/logo.svg",
     () => successLoadFile("logo.svg"),
     () => errorLoadFile("logo.svg")
-  );
-  spotlight = loadImage(
-    "../images/spotlight.png",
-    () => successLoadFile("spotlight.png"),
-    () => errorLoadFile("spotlight.png")
   );
 
   // preload the font styles
@@ -223,12 +216,4 @@ function keyPressed() {
 function windowResized() {
   resizeCanvas(divPanel.size().width, divPanel.size().height);
   background(color(39, 40, 41));
-}
-
-function mousePressed() {
-  mouseOnHold = true;
-}
-
-function mouseReleased() {
-  mouseOnHold = false;
 }

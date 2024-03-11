@@ -1,0 +1,67 @@
+Outlook
+
+* remade the outlook to mp3 player
+
+* this is made by extra objects, and application of Strategy Pattern for the player buttons
+
+* the player framework in $music_player_frame.js$, and the buttons strategies code are in buttons folder
+
+* buttons include play-stop, speed control and volume control. Strategy Pattern is used to structure the coding: each of them are assigned one draw strategy and one hit check strategy
+
+* each buttons, when mouse pressed, are not allowed to change screen display size (other parts of canvas can)
+
+* I prefer using keyboards then using mouse click. so i set up key-mapping switch-case code block to initiate respective functionu
+
+* for testing purpose, I have also added some callbacks to confirm all recource files are being loaded (shown by console.log() code)
+
+Visual 1
+
+* the histogram of waveform has become NorthPole lights
+
+* added blue-black varying background and 3D terrain
+
+* changes of the lights and terrain are reflecting sound energy variation
+
+* added the stars which vertical movement depending on sound energy
+
+* 3D terrain is made by another WEBGL canvas, not the 2D canvas we used to have; this is inserted by createCanvas()
+
+Visual 2
+
+* from single wave to four waves, with reflecting different properties of sound energy (spectrum values)
+
+* added particles with motion speed reflecting bass sound energy variation
+
+* added colorful background
+
+Visual 3
+
+* from four meters to one meter for all measurement of sound energies (fourier.getEnergy() values) of different frequencies
+
+* the sound needles are replaced by visualisation of seven frequency ranges
+
+* background color reflects change of sound energy changes
+
+Visual 4
+
+* new visual for mid-term submission, with flower pattern on the center of the sceen, and the dot colors varies by sound energy (fourier.getEnergy() values change the rgb values)
+
+* development of dots are determined by Mathematical calculation, to make the final shape in flower
+
+* in final report, two more trees and green background have been added
+
+* the tree is drawn by mathematical calculations and Logo Turtle program concept
+
+* the background color changes by variation of sound energy
+
+Visual 5
+
+* newly added visual for final project
+
+* bubbles of the cup of cocktail have changes of size and speed based on change of sound energy
+
+* background color also changes according to sound energy, but async is used to delay the effect
+
+* lyric of the song has been added (start from 00:17), the lyrics data is withdrawn from csv file
+
+* and backlighting of lyrics are controled by sound energy

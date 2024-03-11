@@ -1,0 +1,29 @@
+Time Management
+
+* even though some works are behind schedule, my project has been 90 percent finished as per plan 
+
+* making reference to my mid-term report, except the last visual which has not added into the project, the other five have been updated and meet the plan as per mid-term submit stated
+
+* update of the 2nd - 4th visuals occupied two weeks, that of 1st and 5th occupied two - three weeks
+
+* first, I handled the background pattern of the visuals, then I add the fifth visual, and lastly handled the use of 3D terrain and async-await-promise scheduling works
+
+* this effective way of dividing work made my works smooth
+
+Difficulties 1
+
+* counting in also the testing and report preparation time slots, I have estimated that visual 6 is too over
+
+* I planned to prepare background scene for a song (about three minutes length) in seven visuals in different time, using async to call one by one
+
+* first, making seven visuals are not realistic for such a short time, second it is also not realistic for markers to wait for my project for three minutes
+
+* therefore, I will consider it as my personal project in future.
+
+Difficulties 2
+
+* Applying new learning skills are fun, but before that I was facing challenges to understand the coding concepts
+
+* e.g. mathematics for the 3D terrain, rainbow needles, colorful flower, etc.
+
+* finally I have figured them out, please see my log for detail

@@ -1,7 +1,7 @@
 /* this is visual for the garden
  * the idea of tree comes from a Taiwan book names "p5.js 演算創作", ISBN 978-626-324-435-1
  * Chapter 7
- * idea od Turtle is also coming from the same book, but Logo turtle is actually a very old programming language
+ * idea of Turtle is also coming from the same book, but Logo turtle is actually a very old programming language
  * make reference to https://ia600605.us.archive.org/14/items/byte-magazine-1982-08/1982_08_BYTE_07-08_Logo.pdf, P.248
  * */
 

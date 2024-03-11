@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.7.9)  10 MAR 2024 18:38
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.7.9)  11 MAR 2024 12:00
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1097,23 +1097,37 @@ s : / / en . wikipedia . org / wiki / Logo _ (programming _ language)$[]
  []
 
 [7] (./Topic8/script1.js [8]) (./Topic8/script2.js [9] [10] [11])
-(./Topic8/script3.js [12])) (./Topic9/topic9.tex [13] [14
+(./Topic8/script3.js [12])) [13] (./Topic9/topic9.tex [14
+
 
 ] [15]
-(./Topic9/script1.js) (./Topic9/script2.js [16] [17]) (./Topic9/script3.js
-[18])) (./Topic10/topic10.tex [19] [20
+(./Topic9/script1.js) [16] (./Topic9/script2.js [17]) (./Topic9/script3.js
+[18] [19])) [20] (./Topic10/topic10.tex
+! Missing $ inserted.
+<inserted text> 
+                $
+l.16 Reference to Test_
+                       Cases.xlsx for the test cases of Acceptance Test
+? 
+! Missing $ inserted.
+<inserted text> 
+                $
+l.17 
+     
+? 
+[21
 
-] [21] (./Topic7/script1.js [22] [23])
-(./Topic7/script2.js)) [24] (./Log_Sheets.aux)
+
+]) [22] (./Log_Sheets.aux)
  ***********
 LaTeX2e <2023-06-01> patch level 1
 L3 programming layer <2023-06-30>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 28675 strings out of 476688
- 494006 string characters out of 5798780
- 2217244 words of memory out of 5000000
+ 28564 strings out of 476688
+ 492383 string characters out of 5798780
+ 2187244 words of memory out of 5000000
  48619 multiletter control sequences out of 15000+600000
  578783 words of font info for 109 fonts, out of 8000000 for 9000
  319 hyphenation exceptions out of 8191
@@ -1122,17 +1136,19 @@ Here is how much of TeX's memory you used:
 tcrm1000.600pk></usr/local/texlive/2023basic/texmf-dist/fonts/type1/public/amsf
 onts/cm/cmbx10.pfb></usr/local/texlive/2023basic/texmf-dist/fonts/type1/public/
 amsfonts/cm/cmbx12.pfb></usr/local/texlive/2023basic/texmf-dist/fonts/type1/pub
-lic/amsfonts/cm/cmr10.pfb></usr/local/texlive/2023basic/texmf-dist/fonts/type1/
-public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2023basic/texmf-dist/fonts/typ
-e1/public/amsfonts/cm/cmr17.pfb></usr/local/texlive/2023basic/texmf-dist/fonts/
-type1/public/amsfonts/cm/cmr5.pfb></usr/local/texlive/2023basic/texmf-dist/font
-s/type1/public/amsfonts/cm/cmti10.pfb></usr/local/texlive/2023basic/texmf-dist/
-fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/local/texlive/2023basic/texmf-d
-ist/fonts/type1/public/amsfonts/cm/cmtt8.pfb>
-Output written on Log_Sheets.pdf (25 pages, 190578 bytes).
+lic/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2023basic/texmf-dist/fonts/type1
+/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2023basic/texmf-dist/fonts/ty
+pe1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2023basic/texmf-dist/fonts
+/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2023basic/texmf-dist/fo
+nts/type1/public/amsfonts/cm/cmr17.pfb></usr/local/texlive/2023basic/texmf-dist
+/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/local/texlive/2023basic/texmf-di
+st/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/texlive/2023basic/texm
+f-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/local/texlive/2023basic/
+texmf-dist/fonts/type1/public/amsfonts/cm/cmtt8.pfb>
+Output written on Log_Sheets.pdf (23 pages, 207092 bytes).
 PDF statistics:
- 876 PDF objects out of 1000 (max. 8388607)
- 821 compressed objects within 9 object streams
- 605 named destinations out of 1000 (max. 500000)
+ 751 PDF objects out of 1000 (max. 8388607)
+ 696 compressed objects within 7 object streams
+ 498 named destinations out of 1000 (max. 500000)
  13 words of extra memory for PDF output out of 10000 (max. 10000000)
 
