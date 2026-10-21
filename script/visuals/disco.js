@@ -231,15 +231,23 @@ class LightPlate {
   // load in lyrics from csv file
   onFileload() {
     for (let row = 1; row < this.#loadedTable.getRowCount(); row++)
-      for (
-        let column = 1;
-        column < this.#loadedTable.getColumnCount();
-        column++
-      )
-        this.#lyrics.push({
-          time: this.#loadedTable.getString(row, 0),
-          lyric: this.#loadedTable.getString(row, 1),
-        });
+      this.readLyricRow(row);
+  }
+
+  readLyricRow(row) {
+    for (
+      let column = 1;
+      column < this.#loadedTable.getColumnCount();
+      column++
+    )
+      this.addLyricEntry(row, column);
+  }
+
+  addLyricEntry(row, column) {
+    this.#lyrics.push({
+      time: this.#loadedTable.getString(row, 0),
+      lyric: this.#loadedTable.getString(row, column),
+    });
   }
 
   // find the current lyrics based on time

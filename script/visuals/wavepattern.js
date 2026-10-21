@@ -23,43 +23,9 @@ function WavePattern() {
 
     translate(width / 2, height / 2);
 
-    // draw the first waveform
-    strokeWeight(8);
-    noFill();
-    let sunColor = color(209, 64, 9);
-    stroke(sunColor);
-    // wave is limited in 0 and 180 degrees, hence need to do once more for 180 - 360 degrees
-    for (let half = -1; half <= 1; half += 2) {
-      beginShape();
-      for (let alpha = 0; alpha <= 180; alpha++) {
-        let i = floor(map(alpha, 0, 180, 0, wave.length - 1));
-        let r = 300;
-        let rOffset = map(wave[i], -0.2, 0.2, -100, 100);
-        let x = (r + rOffset) * cos(alpha);
-        let y = (r + rOffset) * sin(alpha) * half;
-
-        vertex(x, y);
-      }
-      endShape();
-    }
-
-    // draw the second waveform
-    let sunFrameColor = color(252, 150, 1);
-    strokeWeight(8);
-    stroke(sunFrameColor);
-    for (let half = -1; half <= 1; half += 2) {
-      beginShape();
-      for (let alpha = 0; alpha <= 180; alpha++) {
-        let i = floor(map(alpha, 0, 180, 0, wave.length - 1));
-        let r = 150;
-        let rOffset = map(wave[i], -0.2, 0.2, -100, 100);
-        let x = (r + rOffset) * cos(180 - alpha);
-        let y = (r + rOffset) * sin(180 - alpha) * half;
-
-        vertex(x, y);
-      }
-      endShape();
-    }
+    // each ring is two halves; the inner half walks the waveform samples
+    this.drawWaveRing(wave, 300, color(209, 64, 9), false);
+    this.drawWaveRing(wave, 150, color(252, 150, 1), true);
 
     // draw the particles
     let particleColor = color(
@@ -80,6 +46,29 @@ function WavePattern() {
     }
 
     pop();
+  };
+
+  // wave samples cover 0-180 degrees, so each ring is drawn twice for a full circle
+  this.drawWaveRing = function (wave, radius, ringColor, reverse) {
+    strokeWeight(8);
+    noFill();
+    stroke(ringColor);
+    for (let half = -1; half <= 1; half += 2)
+      this.drawWaveHalf(wave, radius, half, reverse);
+  };
+
+  this.drawWaveHalf = function (wave, radius, half, reverse) {
+    beginShape();
+    for (let alpha = 0; alpha <= 180; alpha++) {
+      let i = floor(map(alpha, 0, 180, 0, wave.length - 1));
+      let rOffset = map(wave[i], -0.2, 0.2, -100, 100);
+      let angle = reverse ? 180 - alpha : alpha;
+      let x = (radius + rOffset) * cos(angle);
+      let y = (radius + rOffset) * sin(angle) * half;
+
+      vertex(x, y);
+    }
+    endShape();
   };
 
   // make the background looks like near the sun

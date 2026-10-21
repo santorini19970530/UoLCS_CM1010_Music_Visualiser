@@ -24,28 +24,40 @@ function Spectrum() {
   // for being called by the p5.js setup
   // hence the stars and terrain arrays can be initialised
   this.setup = function () {
-    // prepare the stars array
+    this.createStars();
+    this.buildTerrain();
+  };
+
+  this.createStars = function () {
     for (let i = 0; i < starsAmountMax; i++)
       stars.push(
         new Star(random(0, width), random(50, height - 150), random(5, 10))
       );
+  };
 
-    // prepare the terrain vertex array
-    for (x = 0; x < terrainVertexNumbers.x; x++) {
-      terrainParticleDisplacement.x = 0.0;
-      terrainValues.push([]);
-      for (y = 0; y < terrainVertexNumbers.y; y++) {
-        terrainValues[x][y] = map(
-          noise(terrainParticleDisplacement.x, terrainParticleDisplacement.y),
-          0,
-          1,
-          -terrainMaxHeight,
-          terrainMaxHeight
-        );
-        terrainParticleDisplacement.y += terrainAmplitude;
-      }
-    }
+  // each column is its own row of noise samples
+  this.buildTerrain = function () {
+    for (let x = 0; x < terrainVertexNumbers.x; x++)
+      this.buildTerrainColumn(x);
     terrainParticleDisplacement.x += terrainAmplitude;
+  };
+
+  this.buildTerrainColumn = function (x) {
+    terrainParticleDisplacement.x = 0.0;
+    terrainValues.push([]);
+    for (let y = 0; y < terrainVertexNumbers.y; y++)
+      this.setTerrainVertex(x, y);
+  };
+
+  this.setTerrainVertex = function (x, y) {
+    terrainValues[x][y] = map(
+      noise(terrainParticleDisplacement.x, terrainParticleDisplacement.y),
+      0,
+      1,
+      -terrainMaxHeight,
+      terrainMaxHeight
+    );
+    terrainParticleDisplacement.y += terrainAmplitude;
   };
 
   // draw the visual
@@ -53,39 +65,47 @@ function Spectrum() {
     spectrum = this.setSpectrum();
     waveform = fourier.waveform();
 
-    // prepare the background
     drawGradientBackground();
+    this.drawStars();
+    this.drawLights(spectrum);
+    this.drawTerrain(spectrum);
+  };
 
-    // draw the stars
-    stars.forEach((star) => {
-      star.draw();
-      spectrum.forEach((frequency) => {
-        star.updatePos(
-          random(0, width),
-          random(map(noise(spectrum[frequency]), 0, 1, 50, height - 120)) + 50
-        );
-      });
-    });
+  // one energy value moves every star once per frame
+  this.drawStars = function () {
+    const energy = fourier.getEnergy("treble");
 
-    // draw the NorthPole lights
+    for (let i = 0; i < stars.length; i++) {
+      stars[i].draw();
+      stars[i].updatePos(
+        random(0, width),
+        random(map(noise(energy), 0, 1, 50, height - 120)) + 50
+      );
+    }
+  };
+
+  this.drawLights = function (spectrum) {
     push();
     noStroke();
-    for (let i = 0; i < spectrum.length; i++) {
-      let lineX = map(i, 0, spectrum.length, 0, width);
-      let lineY = map(spectrum[i], 0, 255, 50, (height - 150) / 2, true);
-
-      let line_color = color(
-        0,
-        map(i, 0, spectrum.length, 100, 255),
-        map(i, 0, spectrum.length, 100, 255)
-      );
-      fill(line_color);
-      for (let j = 0; j < 20; j++)
-        ellipse(lineX, lineY + 8 * j, map(spectrum[i], 0, 255, 0, 8));
-    }
+    for (let i = 0; i < spectrum.length; i++) this.drawLightColumn(spectrum, i);
     pop();
+  };
 
-    // draw the 3D terrain
+  this.drawLightColumn = function (spectrum, i) {
+    let lineX = map(i, 0, spectrum.length, 0, width);
+    let lineY = map(spectrum[i], 0, 255, 50, (height - 150) / 2, true);
+    let line_color = color(
+      0,
+      map(i, 0, spectrum.length, 100, 255),
+      map(i, 0, spectrum.length, 100, 255)
+    );
+
+    fill(line_color);
+    for (let j = 0; j < 20; j++)
+      ellipse(lineX, lineY + 8 * j, map(spectrum[i], 0, 255, 0, 8));
+  };
+
+  this.drawTerrain = function (spectrum) {
     threeDCanvas.clear();
     threeDCanvas.push();
     threeDCanvas.translate(
@@ -97,30 +117,39 @@ function Spectrum() {
     threeDCanvas.fill(color(0, 30, 200));
     threeDCanvas.rotateX(80);
 
-    // prepare the terrain vertex array
-    for (let x = 0; x < terrainVertexNumbers.x; x++) {
-      let spectrumIndex = Math.floor(
-        map(x, 0, terrainVertexNumbers.x, 0, spectrum.length)
-      );
-
-      let amplitude = spectrum[spectrumIndex];
-      let vertexHeight = map(amplitude, 0, 255, 0, terrainMaxHeight);
-
-      for (let y = 0; y < terrainVertexNumbers.y; y++)
-        terrainValues[x][y] = vertexHeight;
-    }
-
-    // draw the terrain vertex
-    for (let y = 0; y < terrainVertexNumbers.y; y++) {
-      threeDCanvas.beginShape(TRIANGLE_STRIP);
-      for (let x = 0; x < terrainVertexNumbers.x; x++) {
-        threeDCanvas.vertex(x * 50, y * 20, terrainValues[x][y]);
-        threeDCanvas.vertex(x * 50, (y + 1) * 20, terrainValues[x][y]);
-      }
-      threeDCanvas.endShape();
-    }
+    this.fillTerrainHeights(spectrum);
+    this.drawTerrainMesh();
 
     threeDCanvas.pop();
+  };
+
+  this.fillTerrainHeights = function (spectrum) {
+    for (let x = 0; x < terrainVertexNumbers.x; x++)
+      this.fillTerrainColumn(x, spectrum);
+  };
+
+  this.fillTerrainColumn = function (x, spectrum) {
+    let spectrumIndex = Math.floor(
+      map(x, 0, terrainVertexNumbers.x, 0, spectrum.length)
+    );
+    let amplitude = spectrum[spectrumIndex];
+    let vertexHeight = map(amplitude, 0, 255, 0, terrainMaxHeight);
+
+    for (let y = 0; y < terrainVertexNumbers.y; y++)
+      terrainValues[x][y] = vertexHeight;
+  };
+
+  this.drawTerrainMesh = function () {
+    for (let y = 0; y < terrainVertexNumbers.y; y++) this.drawTerrainRow(y);
+  };
+
+  this.drawTerrainRow = function (y) {
+    threeDCanvas.beginShape(TRIANGLE_STRIP);
+    for (let x = 0; x < terrainVertexNumbers.x; x++) {
+      threeDCanvas.vertex(x * 50, y * 20, terrainValues[x][y]);
+      threeDCanvas.vertex(x * 50, (y + 1) * 20, terrainValues[x][y]);
+    }
+    threeDCanvas.endShape();
   };
 
   // make the background looks like in the North Pole

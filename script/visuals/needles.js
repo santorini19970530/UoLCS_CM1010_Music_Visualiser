@@ -46,29 +46,28 @@ function Needles() {
     noStroke();
 
     translate(width / 2, height / 2);
-    for (let i = 0; i < this.rainbow.length; i++) {
-      // getEnergy with two digit variables will get averaged amplitude of range of sound frequencies
-      energy = fourier.getEnergy(
-        this.frequencyBins[i].lower,
-        this.frequencyBins[i].upper
-      );
-
-      let maxAngle = map(energy, 0, 255, 0, 360);
-
-      // draw the status bar out, from zero energy to energy of certain range of music at certain time
-      for (let alpha = 0; alpha <= maxAngle; alpha++) {
-        fill(this.rainbow[i]);
-        let r = radius + i * 30;
-        let rOffset = 0;
-        let x = r * cos(alpha - 90) + rOffset;
-        let y = (r + rOffset) * sin(alpha - 90);
-        ellipse(x, y, 20);
-      }
-    }
+    for (let i = 0; i < this.rainbow.length; i++) this.drawFrequencyRing(i);
 
     pop();
 
     ticks();
+  };
+
+  // getEnergy with two arguments is the average amplitude of that frequency range
+  this.drawFrequencyRing = function (index) {
+    energy = fourier.getEnergy(
+      this.frequencyBins[index].lower,
+      this.frequencyBins[index].upper
+    );
+    this.drawRingDots(index, map(energy, 0, 255, 0, 360));
+  };
+
+  this.drawRingDots = function (index, maxAngle) {
+    for (let alpha = 0; alpha <= maxAngle; alpha++) {
+      fill(this.rainbow[index]);
+      let r = radius + index * 30;
+      ellipse(r * cos(alpha - 90), r * sin(alpha - 90), 20);
+    }
   };
 
   // private method()
