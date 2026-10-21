@@ -5,6 +5,12 @@ class ControlsAndInput {
     // flag to determine whether to play or pause after button click and to determine which icon to draw
     this.menuDisplayed = false;
     this.playing = false;
+    this.trackForVisual = {
+      wavepattern: 5,
+      needles: 6,
+      phyllotaxis: 2,
+      disco: 7,
+    };
 
     // arrays of buttons
     this.buttons = {
@@ -59,6 +65,8 @@ class ControlsAndInput {
     let isPressed = false;
 
     //check if the buttons have been clicked, if not make the visualisation fullscreen
+    if (this.menuHit()) isPressed = true;
+
     Object.keys(this.buttons).forEach((key) => {
       if (this.buttons[key].hitCheck()) isPressed = true;
     });
@@ -68,7 +76,11 @@ class ControlsAndInput {
 
   // responds to keyboard presses, keycode the ascii code of the keypressed
   keyPressed = function (keycode) {
-    // when number keys are pressed, select the visuals
+    if (keycode >= 49 && keycode <= 57) {
+      const visNumber = keycode - 49;
+      if (visNumber < vis.visuals.length) this.selectVisualNumber(visNumber);
+      return;
+    }
 
     switch (keycode) {
       // space bar - play and pause the music
@@ -76,61 +88,6 @@ class ControlsAndInput {
         if (player.isPlaying()) player.pause();
         else player.startLoop();
         controls.playing = !controls.playing;
-        break;
-
-      // number keys - call the visuals
-      case 49:
-      case 50:
-      case 51:
-      case 52:
-      case 53:
-      case 54:
-      case 55:
-      case 56:
-      case 57:
-        let visNumber = keycode - 49;
-
-        try {
-          vis.selectVisual(vis.visuals[visNumber].name);
-
-          // some visuals need to play specific songs
-          if (this.playing)
-            switch (visNumber) {
-              case 1:
-                if (player.index != 5) {
-                  player.stop();
-                  player.select(5);
-                  player.startLoop();
-                }
-                break;
-              case 2:
-                if (player.index != 6) {
-                  player.stop();
-                  player.select(6);
-                  player.startLoop();
-                }
-                break;
-              case 3:
-                if (player.index != 2) {
-                  player.stop();
-                  player.select(2);
-                  player.startLoop();
-                }
-                break;
-              case 4:
-                if (player.index != 7) {
-                  player.stop();
-                  player.select(7);
-                  player.markNow();
-                  player.startOnce();
-                }
-                break;
-              default:
-                break;
-            }
-        } catch {
-          console.error("No such visual");
-        }
         break;
 
       // left button - go back one song
@@ -214,6 +171,38 @@ class ControlsAndInput {
 
     pop();
   };
+
+  selectVisualNumber(visNumber) {
+    const visual = vis.visuals[visNumber];
+    vis.selectVisual(visual.name);
+    if (!this.playing) return;
+
+    const track = this.trackForVisual[visual.name];
+    if (track === undefined || player.index === track) return;
+
+    player.stop();
+    player.select(track);
+    if (visual.name === "disco") player.markNow();
+    player.startLoop();
+  }
+
+  menuHit() {
+    if (!this.menuDisplayed) return false;
+
+    textSize(16);
+    textFont(fontNamed("fontMedium"));
+    for (let i = 0; i < vis.visuals.length; i++) {
+      const label = i + 1 + " : " + vis.visuals[i].name;
+      const x = 150 + 150 * (i + 1);
+      const labelWidth = textWidth(label);
+      if (mouseX > x && mouseX < x + labelWidth && mouseY > 28 && mouseY < 52) {
+        this.selectVisualNumber(i);
+        return true;
+      }
+    }
+
+    return false;
+  }
 
   // private
   // draw out menu items for each visualisation
