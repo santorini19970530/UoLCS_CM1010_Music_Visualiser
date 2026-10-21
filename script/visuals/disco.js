@@ -352,6 +352,10 @@ class DiscoBackground {
   #redFactor;
   #blueFactor;
   #greenFactor;
+  #lastRed = 0;
+  #lastBlue = 0;
+  #lastGreen = 0;
+  #lastDivider = 0;
 
   constructor() {
     this.#position = { x: 0, y: 50 };
@@ -362,7 +366,7 @@ class DiscoBackground {
   }
 
   // draw the background
-  async draw() {
+  draw() {
     let gradient = drawingContext.createLinearGradient(
       this.#position.x,
       this.#position.y,
@@ -380,71 +384,30 @@ class DiscoBackground {
     drawingContext.fillStyle = gradient;
     rect(this.#position.x, this.#position.y, width, height - 50 - 120);
 
-    // await for sequencing the processes
-    let resultRed = await this.changeRed();
-    let resultBlue = await this.changeBlue();
-    let resultGreen = await this.changeGreen();
-    let result = await this.changeSpectrum();
-  }
+    const now = millis();
+    if (this.#lastRed === 0) {
+      this.#lastRed = now;
+      this.#lastBlue = now;
+      this.#lastGreen = now;
+      this.#lastDivider = now;
+    }
 
-  // promise part
-  changeSpectrum() {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        this.#colorSpectrumDivider = map(
-          player.energy("mid"),
-          0,
-          255,
-          0.2,
-          0.8
-        );
-        resolve();
-      }, 5000);
-    });
-  }
-
-  changeRed() {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        this.#redFactor = map(
-          noise(player.energy("lowMid")),
-          0,
-          1,
-          200,
-          255
-        );
-        resolve();
-      }, 2000);
-    });
-  }
-
-  changeBlue() {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        this.#blueFactor = map(
-          noise(player.energy("highMid")),
-          0,
-          1,
-          200,
-          255
-        );
-        resolve();
-      }, 3000);
-    });
-  }
-
-  changeGreen() {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        this.#greenFactor = map(
-          noise(player.energy(16, 32)),
-          0,
-          1,
-          210,
-          255
-        );
-        resolve();
-      }, 4000);
-    });
+    // same gaps as before: red 2s, blue 3s, green 4s, divider 5s
+    if (now - this.#lastRed >= 2000) {
+      this.#redFactor = map(noise(player.energy("lowMid")), 0, 1, 200, 255);
+      this.#lastRed = now;
+    }
+    if (now - this.#lastBlue >= 3000) {
+      this.#blueFactor = map(noise(player.energy("highMid")), 0, 1, 200, 255);
+      this.#lastBlue = now;
+    }
+    if (now - this.#lastGreen >= 4000) {
+      this.#greenFactor = map(noise(player.energy(16, 32)), 0, 1, 210, 255);
+      this.#lastGreen = now;
+    }
+    if (now - this.#lastDivider >= 5000) {
+      this.#colorSpectrumDivider = map(player.energy("mid"), 0, 255, 0.2, 0.8);
+      this.#lastDivider = now;
+    }
   }
 }
