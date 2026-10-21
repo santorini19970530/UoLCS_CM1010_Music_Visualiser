@@ -29,7 +29,6 @@ class Spectrum {
     );
     this.#graphics.clear();
     this.#graphics.angleMode(DEGREES);
-    this.#graphics.parent("canvasPanel");
     this.buildTerrain();
   }
 
