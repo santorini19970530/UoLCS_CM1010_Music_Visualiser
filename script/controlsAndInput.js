@@ -25,7 +25,7 @@ class ControlsAndInput {
         120,
         20,
         new PlaySpeedDrawStrategy("faster"),
-        new PlaySpeedHitChcekStrategy("faster")
+        new PlaySpeedHitCheckStrategy("faster")
       ),
 
       slowerButton: new Button(
@@ -34,7 +34,7 @@ class ControlsAndInput {
         120,
         20,
         new PlaySpeedDrawStrategy("slower"),
-        new PlaySpeedHitChcekStrategy("slower")
+        new PlaySpeedHitCheckStrategy("slower")
       ),
 
       // sound control slider
@@ -68,11 +68,8 @@ class ControlsAndInput {
     switch (keycode) {
       // space bar - play and pause the music
       case 32:
-        if (sound.isPlaying()) sound.pause();
-        else {
-          sound.loop();
-          sound.rate(playSpeed);
-        }
+        if (player.isPlaying()) player.pause();
+        else player.startLoop();
         controls.playing = !controls.playing;
         break;
 
@@ -95,40 +92,32 @@ class ControlsAndInput {
           if (this.playing)
             switch (visNumber) {
               case 1:
-                if (playingSound != 5) {
-                  sound.stop();
-                  playingSound = 5;
-                  sound = sounds[playingSound];
-                  sound.setVolume(playVolume);
-                  sound.loop();
+                if (player.index != 5) {
+                  player.stop();
+                  player.select(5);
+                  player.startLoop();
                 }
                 break;
               case 2:
-                if (playingSound != 6) {
-                  sound.stop();
-                  playingSound = 6;
-                  sound = sounds[playingSound];
-                  sound.setVolume(playVolume);
-                  sound.loop();
+                if (player.index != 6) {
+                  player.stop();
+                  player.select(6);
+                  player.startLoop();
                 }
                 break;
               case 3:
-                if (playingSound != 2) {
-                  sound.stop();
-                  playingSound = 2;
-                  sound = sounds[playingSound];
-                  sound.setVolume(playVolume);
-                  sound.loop();
+                if (player.index != 2) {
+                  player.stop();
+                  player.select(2);
+                  player.startLoop();
                 }
                 break;
               case 4:
-                if (playingSound != 7) {
-                  sound.stop();
-                  playingSound = 7;
-                  sound = sounds[playingSound];
-                  fifthVisualTime = millis();
-                  sound.setVolume(playVolume);
-                  sound.play(); // just play for one time
+                if (player.index != 7) {
+                  player.stop();
+                  player.select(7);
+                  player.markNow();
+                  player.startOnce();
                 }
                 break;
               default:
@@ -142,39 +131,32 @@ class ControlsAndInput {
       // left button - go back one song
       case 37:
         if (this.playing) {
-          sound.stop();
-          playingSound =
-            playingSound > 0 ? playingSound - 1 : sounds.length - 1;
-          sound = sounds[playingSound];
-          sound.loop();
-          sound.rate(playSpeed);
-          sound.setVolume(0.1);
+          const previous = player.index > 0 ? player.index - 1 : player.count - 1;
+          player.stop();
+          player.select(previous);
+          player.loopCurrent();
+          player.outputVolume(0.1);
         }
         break;
 
       // right button - go forward one song
       case 39:
         if (this.playing) {
-          sound.stop();
-          playingSound =
-            playingSound < sounds.length - 1 ? playingSound + 1 : 0;
-          sound = sounds[playingSound];
-          sound.loop();
-          sound.rate(playSpeed);
-          sound.setVolume(playVolume);
+          const next = player.index < player.count - 1 ? player.index + 1 : 0;
+          player.stop();
+          player.select(next);
+          player.startLoop();
         }
         break;
 
       // "f" button (no shift) - play the music faster
       case 70:
-        playSpeed += 0.1;
-        if (sound.isPlaying()) sound.rate(playSpeed);
+        player.speed += 0.1;
         break;
 
       // "s" button (no shift) - play the music slower
       case 83:
-        playSpeed -= 0.1;
-        if (sound.isPlaying()) sound.rate(playSpeed);
+        player.speed -= 0.1;
         break;
 
       // "m" button (no shift) - show the menu
@@ -184,23 +166,18 @@ class ControlsAndInput {
 
       // up button - make the volume louder
       case 38:
-        playVolume += 0.1;
-        if (playVolume > 1.0) playVolume = 1.0;
+        player.volume = Math.min(1, player.volume + 0.1);
         controls.buttons.volumeControlSlider.drawStrategy.setSliderPos(
-          playVolume
+          player.volume
         );
-        sound.setVolume(playVolume);
-
         break;
 
       // down button - make the volume quieter
       case 40:
-        playVolume -= 0.1;
-        if (playVolume <= 0.1) playVolume = 0.1;
+        player.volume = Math.max(0.1, player.volume - 0.1);
         controls.buttons.volumeControlSlider.drawStrategy.setSliderPos(
-          playVolume
+          player.volume
         );
-        sound.setVolume(playVolume);
         break;
 
       // default: other keys do nothing

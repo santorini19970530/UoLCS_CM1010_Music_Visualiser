@@ -47,7 +47,7 @@ class PlaySpeedDrawStrategy {
 
 /* check hit of play speed buttons
  then regulate the play speed in accordance to the button pressed */
-class PlaySpeedHitChcekStrategy {
+class PlaySpeedHitCheckStrategy {
   constructor(type) {
     this.x = null;
     this.y = null;
@@ -65,9 +65,8 @@ class PlaySpeedHitChcekStrategy {
     let y2 = this.y + this.height / 2 + this.height * 1.5;
 
     if (mouseX > x1 && mouseX < x2 && mouseY > y1 && mouseY < y2) {
-      playSpeed =
-        this.buttonType == "faster" ? playSpeed + 0.1 : playSpeed - 0.1;
-      if (sound.isPlaying()) sound.rate(playSpeed);
+      player.speed =
+        this.buttonType == "faster" ? player.speed + 0.1 : player.speed - 0.1;
 
       return true;
     }

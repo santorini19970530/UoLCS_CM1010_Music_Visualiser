@@ -58,11 +58,8 @@ class PlaybackAndPauseHitCheckStrategy {
     let y2 = this.y + this.height / 2 + this.width * 1.5;
 
     if (mouseX > x1 && mouseX < x2 && mouseY > y1 && mouseY < y2) {
-      if (sound.isPlaying()) sound.pause();
-      else {
-        sound.loop();
-        sound.rate(playSpeed);
-      }
+      if (player.isPlaying()) player.pause();
+      else player.startLoop();
 
       controls.playing = !controls.playing;
 

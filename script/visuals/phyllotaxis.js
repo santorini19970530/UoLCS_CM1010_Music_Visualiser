@@ -5,73 +5,68 @@
  * make reference to https://ia600605.us.archive.org/14/items/byte-magazine-1982-08/1982_08_BYTE_07-08_Logo.pdf, P.248
  * */
 
-function Phyllotaxis() {
+class Phyllotaxis {
   // private
-  let c = 6;
+  #c = 6;
   // 137.5 degrees is the golden angle, so successive dots do not land on the same radius
-  let expansionAngle = 137.5;
-  let n = 0;
-  let dots = [];
+  #expansionAngle = 137.5;
+  #n = 0;
+  #dots = [];
 
   // public
-  this.name = "phyllotaxis";
+  name = "phyllotaxis";
 
   // draw the visual
-  this.draw = function () {
-    let spectrum = fourier.analyze();
+  draw() {
+    player.analyse();
+    this.drawVarientBackground(color(0, 103, 26));
+    this.drawFlower();
+    if (this.#dots.length > 5000) this.clearDots();
+    this.drawSideTree(width / 4, 100);
+    this.drawSideTree((width * 5) / 6, 120);
+  }
 
+  drawFlower() {
     push();
-
-    drawVarientBackground(color(0, 103, 26));
-
     translate(width / 2, height / 2);
-    // draw the tree
-
     noStroke();
+
     // making use of fibonacci seriees to make circles in spiral shapes and arrangements
-    let alpha = n * expansionAngle;
-    let r = c * sqrt(n);
+    let alpha = this.#n * this.#expansionAngle;
+    let r = this.#c * sqrt(this.#n);
     let x = r * cos(alpha);
     let y = r * sin(alpha);
 
-    dots.push(
+    this.#dots.push(
       new Dot(
         x,
         y,
         color(
-          fourier.getEnergy("bass"),
-          fourier.getEnergy("mid"),
-          fourier.getEnergy("treble")
+          player.energy("bass"),
+          player.energy("mid"),
+          player.energy("treble")
         )
       )
     );
-    for (let i = dots.length - 1; i >= 0; i--) {
-      if (dots[i].isOffScreen()) dots.splice(i, 1);
-      else dots[i].draw();
+    for (let i = this.#dots.length - 1; i >= 0; i--) {
+      if (this.#dots[i].isOffScreen()) this.#dots.splice(i, 1);
+      else this.#dots[i].draw();
     }
-    n++;
-
+    this.#n++;
     pop();
-    if (dots.length > 5000) clearDots();
+  };
 
-    // draw the tree on left
+  drawSideTree(x, length) {
     push();
-    translate(width / 4, height - 120);
+    translate(x, height - 120);
     rotate(-90);
-    this.drawTree(100);
-    pop();
-
-    // draw the tree on right
-    push();
-    translate((width * 5) / 6, height - 120);
-    rotate(-90);
-    this.drawTree(120);
+    this.drawTree(length);
     pop();
   };
 
   // draw the tree
   // this is recursion, until n = 0
-  this.drawTree = function (
+  drawTree(
     length,
     angle = 37,
     branchRatio = 0.75,
@@ -90,7 +85,7 @@ function Phyllotaxis() {
     }
 
     // ask the turtle to move forward (for drawing)
-    footprint(t.forward(length));
+    this.footprint(t.forward(length));
 
     if (n > 0) {
       // 37 degrees is the spread between the two child branches.
@@ -102,7 +97,7 @@ function Phyllotaxis() {
       this.drawTree(
         length *
           branchRatio *
-          map(fourier.getEnergy("lowMid"), 0, 255, 0.85, 1.15),
+          map(player.energy("lowMid"), 0, 255, 0.85, 1.15),
         angle * random(0.95, 1.05),
         branchRatio,
         t,
@@ -115,7 +110,7 @@ function Phyllotaxis() {
       this.drawTree(
         length *
           branchRatio *
-          map(fourier.getEnergy("highMid"), 0, 255, 0.85, 1.15),
+          map(player.energy("highMid"), 0, 255, 0.85, 1.15),
         -angle * random(0.95, 1.05),
         branchRatio,
         t,
@@ -126,27 +121,27 @@ function Phyllotaxis() {
 
   // private
   // to prevent too much dots that causing system overload
-  let clearDots = function () {
-    n = 0;
-    for (let i = dots.length - 1; i >= 0; i--) dots.pop();
-  };
+  clearDots() {
+    this.#n = 0;
+    for (let i = this.#dots.length - 1; i >= 0; i--) this.#dots.pop();
+  }
 
-  let footprint = function ({ from, to }) {
+  footprint({ from, to }) {
     line(from.x, from.y, to.x, to.y);
-  };
+  }
 
   // make the background looks like near the sun
   // linearGradient is not p5.js function, this is WebAPI function
   // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/createLinearGradient
 
-  let drawVarientBackground = function (c) {
+  drawVarientBackground(c) {
     let gradient = drawingContext.createLinearGradient(
       0,
       50,
       width,
       height - 50 - 120
     );
-    let variation = map(fourier.getEnergy(16, 16384), 0, 255, -20, 20);
+    let variation = map(player.energy(16, 16384), 0, 255, -20, 20);
     gradient.addColorStop(
       0,
       color(red(c) + variation, green(c) + variation, blue(c) + variation)

@@ -4,38 +4,24 @@
  * p5.js 1.8.0, p5.sound 1.0.1
  */
 
-//global for the controls and input
-var controls = null;
-//store visualisations in a container
-var vis = null;
-//variable for the p5 sound object
-var sound = null;
-// sound files
-var soundSource = [];
-var sounds = [];
-var playingSound = 0;
-// speed of play
-var playSpeed;
-// volumen of play
-var playVolume;
-//variable for p5 fast fourier transform
-var fourier;
-// GoldSmiths, UoL logo
-var logo, logo2;
+// global for the controls and input
+let controls = null;
+// store visualisations in a container
+let vis = null;
+// playback: tracks, volume, speed, and the FFT
+let player = null;
+// Goldsmiths, UoL logo
+let logo;
+let logo2;
 // font files array
-var fontFiles = [];
+let fontFiles = [];
 // variables for the music player
-var canvas = null;
-var divPanel;
-var music_player = null;
-// for the 3D canvas in the first visual
-var threeDCanvas;
-// record the time before calling the fifth visual
-var fifthVisualTime;
-
+let canvas = null;
+let divPanel;
+let musicPlayer = null;
 function preload() {
-  // preload the sound information
-  soundSource = [
+  player = new Player();
+  [
     "./assets/gfriend_summer_rain.mp3",
     "./assets/viviz_maniac.mp3",
     "./assets/gfriend_flower_garden.mp3",
@@ -44,23 +30,7 @@ function preload() {
     "./assets/gfriend_sunrise.mp3",
     "./assets/gfriend_rainbow.mp3",
     "./assets/gfriend_mago.mp3",
-  ];
-
-  soundSource.forEach((source) => {
-    sounds.push(
-      loadSound(
-        source,
-        () => successLoadFile(source),
-        () => errorLoadFile(source),
-        () => whileLoadingFile(source)
-      )
-    );
-  });
-
-  sound = sounds[playingSound];
-
-  playVolume = 0.1;
-  sound.setVolume(playVolume);
+  ].forEach((source) => player.addTrack(source));
 
   // preload the school logos and spotlight image
   logo = loadImage(
@@ -119,21 +89,8 @@ function setup() {
   canvas.parent("canvasPanel");
   background(color(39, 40, 41));
 
-  /*
-  WEBGL canvas, for the terrain of the first visual 
-  source: https://www.youtube.com/watch?v=TaluaAD9MKA
- */
-  threeDCanvas = createGraphics(
-    divPanel.size().width,
-    divPanel.size().height - 120,
-    WEBGL
-  );
-  threeDCanvas.clear();
-  threeDCanvas.angleMode(DEGREES);
-  threeDCanvas.parent("canvasPanel");
-
   // draw the music player body
-  music_player = new Music_Player_Frame();
+  musicPlayer = new MusicPlayerFrame();
 
   // set up the control panel
   controls = new ControlsAndInput();
@@ -146,15 +103,10 @@ function setup() {
   vis.add(new Phyllotaxis());
   vis.add(new Disco());
 
-  // instantiate the fft object
-  fourier = new p5.FFT();
+  player.start();
 
-  // set the sound setting
-  playSpeed = 1;
-
-  // prepare stars for the first and fifth visual
+  // terrain mesh for the first visual; stars and bubbles are created while audio plays
   vis.visuals[0].setup();
-  vis.visuals[4].setup();
 
   // make all angles as degree
   angleMode(DEGREES);
@@ -162,11 +114,9 @@ function setup() {
 
 function draw() {
   // draw the music player
-  music_player.draw();
+  musicPlayer.draw();
 
-  // only in the first visualisation, 3D canvas will be drawn
   vis.selectedVisual.draw();
-  if (vis.selectedVisual.name == "spectrum") image(threeDCanvas, 0, 0);
 
   // draw the controls items
   controls.draw();

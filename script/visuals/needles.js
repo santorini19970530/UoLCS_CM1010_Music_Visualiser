@@ -1,19 +1,19 @@
 /* constructor function to draw the status bars (originally needles) */
 
-function Needles() {
+class Needles {
   // private
   // how large is the arc of the needle plot.
-  let radius = 100;
-  let energy;
+  #radius = 100;
+  #energy;
 
   // public
-  this.name = "needles";
+  name = "needles";
 
   //frquencies used by the energyfunction to retrieve a value for each plot
   // human detectable sound frequencies are ranged between 16Hz and 32,768 Hz
   // 16,384 Hz - 32,768 Hz are too high that not included in the songs
   // hence i use the other ranges to divide into seven ranges for illustrating rainbow visual
-  this.frequencyBins = [
+  #frequencyBins = [
     { lower: 16, upper: 32 },
     { lower: 32, upper: 280 },
     { lower: 280, upper: 512 },
@@ -22,7 +22,7 @@ function Needles() {
     { lower: 8192, upper: 12288 },
     { lower: 12288, upper: 16384 },
   ];
-  this.rainbow = [
+  #rainbow = [
     color(255, 26, 26),
     color(265, 165, 0),
     color(255, 255, 26),
@@ -33,12 +33,12 @@ function Needles() {
   ];
 
   // draw the plots to the screen
-  this.draw = function () {
+  draw() {
     // create an array amplitude values from the fft.
-    let spectrum = fourier.analyze();
+    player.analyse();
 
-    drawVarientBackground(
-      color(fourier.getEnergy("lowMid"), 100, fourier.getEnergy("highMid"))
+    this.drawVarientBackground(
+      color(player.energy("lowMid"), 100, player.energy("highMid"))
     );
 
     push();
@@ -46,34 +46,34 @@ function Needles() {
     noStroke();
 
     translate(width / 2, height / 2);
-    for (let i = 0; i < this.rainbow.length; i++) this.drawFrequencyRing(i);
+    for (let i = 0; i < this.#rainbow.length; i++) this.drawFrequencyRing(i);
 
     pop();
 
-    ticks();
-  };
+    this.ticks();
+  }
 
   // getEnergy with two arguments is the average amplitude of that frequency range
-  this.drawFrequencyRing = function (index) {
-    energy = fourier.getEnergy(
-      this.frequencyBins[index].lower,
-      this.frequencyBins[index].upper
+  drawFrequencyRing(index) {
+    this.#energy = player.energy(
+      this.#frequencyBins[index].lower,
+      this.#frequencyBins[index].upper
     );
-    this.drawRingDots(index, map(energy, 0, 255, 0, 360));
-  };
+    this.drawRingDots(index, map(this.#energy, 0, 255, 0, 360));
+  }
 
-  this.drawRingDots = function (index, maxAngle) {
+  drawRingDots(index, maxAngle) {
     for (let alpha = 0; alpha <= maxAngle; alpha++) {
-      fill(this.rainbow[index]);
-      let r = radius + index * 30;
+      fill(this.#rainbow[index]);
+      let r = this.#radius + index * 30;
       ellipse(r * cos(alpha - 90), r * sin(alpha - 90), 20);
     }
-  };
+  }
 
   // private
   // draw the graph ticks on an indivisual plot
-  let ticks = function () {
-    let tickRadius = radius - 20;
+  ticks() {
+    let tickRadius = this.#radius - 20;
 
     push();
 
@@ -118,7 +118,7 @@ function Needles() {
   // linearGradient is not p5.js function, this is WebAPI function
   // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/createLinearGradient
 
-  let drawVarientBackground = function (c) {
+  drawVarientBackground(c) {
     let gradient = drawingContext.createLinearGradient(
       0,
       50,

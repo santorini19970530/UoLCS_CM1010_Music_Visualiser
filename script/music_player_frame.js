@@ -3,7 +3,7 @@
 // the player is divided by upper and lower part
 // each part are having each own items to be drawn
 
-class Music_Player_Frame {
+class MusicPlayerFrame {
   // private
   #upFrame; // this is the binding for the son
   #lowFrame; // this is the binding for the son
@@ -42,7 +42,7 @@ const UpperFrame = function () {
     textAlign(LEFT);
     text("MUSIC VISUALISER", 30, 20);
     textAlign(CENTER);
-    fileName = soundSource[playingSound].split(/(\\|\/)/g).pop();
+    fileName = player.pathAt(player.index).split(/(\\|\/)/g).pop();
     text(fileName, width / 2, 17);
     textAlign(LEFT);
 
@@ -52,7 +52,7 @@ const UpperFrame = function () {
   // draw the corner buttons
   let drawCornerButton = () => {
     let characters = ["L", "O", "U"];
-    let boxwidth = 15;
+    let boxWidth = 15;
 
     push();
 
@@ -60,10 +60,10 @@ const UpperFrame = function () {
       fill(0);
       stroke(100);
       strokeWeight(1.5);
-      rect(width - 5 - boxwidth * (i + 1), 5, boxwidth, boxwidth);
+      rect(width - 5 - boxWidth * (i + 1), 5, boxWidth, boxWidth);
       fill(255);
       noStroke();
-      text(characters[i], width - 2.5 - boxwidth * (i + 1), 17.5);
+      text(characters[i], width - 2.5 - boxWidth * (i + 1), 17.5);
     }
 
     pop();
@@ -129,9 +129,9 @@ const TimeDisplay = function (y) {
     textStyle(BOLD);
     textFont(fontFiles.keys("fontDigit"));
     // musicCurrentTime() : returns Number: currentTime of the soundFile in seconds
-    musicCurrentTime = sounds[playingSound].currentTime();
-    // musicDuration() : returns Number: The duration of the soundFile in seconds
-    musicDuration = sounds[playingSound].duration();
+    musicCurrentTime = player.currentTime();
+    // duration of the sound file in seconds
+    musicDuration = player.duration();
 
     text(
       String("0" + Math.floor(musicCurrentTime / 60)).slice(-2) +
