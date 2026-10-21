@@ -3,7 +3,7 @@
 // the player is divided by upper and lower part
 // each part are having each own items to be drawn
 
-class Music_Player_Frame {
+class MusicPlayerFrame {
   // private
   #upFrame; // this is the binding for the son
   #lowFrame; // this is the binding for the son
@@ -15,7 +15,7 @@ class Music_Player_Frame {
     this.#lowFrame = new LowerFrame();
   }
 
-  //public
+  // public
   draw = () => {
     this.#upFrame.draw();
     this.#lowFrame.draw();
@@ -25,8 +25,7 @@ class Music_Player_Frame {
 // set up constructors of the frames
 // upper frame
 const UpperFrame = function () {
-  //private
-  let frameWidth = divPanel.size().width;
+  // private
   let frameHeight = 50;
   let fileName = "";
 
@@ -38,11 +37,11 @@ const UpperFrame = function () {
     stroke(0);
     fill(255);
     textSize(16);
-    textFont(fontFiles.keys("fontMedium"));
+    textFont(fontNamed("fontMedium"));
     textAlign(LEFT);
     text("MUSIC VISUALISER", 30, 20);
     textAlign(CENTER);
-    fileName = soundSource[playingSound].split(/(\\|\/)/g).pop();
+    fileName = player.pathAt(player.index).split(/(\\|\/)/g).pop();
     text(fileName, width / 2, 17);
     textAlign(LEFT);
 
@@ -52,7 +51,7 @@ const UpperFrame = function () {
   // draw the corner buttons
   let drawCornerButton = () => {
     let characters = ["L", "O", "U"];
-    let boxwidth = 15;
+    let boxWidth = 15;
 
     push();
 
@@ -60,10 +59,10 @@ const UpperFrame = function () {
       fill(0);
       stroke(100);
       strokeWeight(1.5);
-      rect(width - 5 - boxwidth * (i + 1), 5, boxwidth, boxwidth);
+      rect(width - 5 - boxWidth * (i + 1), 5, boxWidth, boxWidth);
       fill(255);
       noStroke();
-      text(characters[i], width - 2.5 - boxwidth * (i + 1), 17.5);
+      text(characters[i], width - 2.5 - boxWidth * (i + 1), 17.5);
     }
 
     pop();
@@ -76,7 +75,7 @@ const UpperFrame = function () {
     push();
 
     fill(color(97, 103, 122));
-    rect(0, 0, frameWidth, frameHeight);
+    rect(0, 0, width, frameHeight);
 
     strokeWeight(2);
     stroke(color(50, 50, 50));
@@ -92,8 +91,7 @@ const UpperFrame = function () {
 
 // lower framw
 const LowerFrame = function () {
-  //private
-  let frameWidth = divPanel.size().width;
+  // private
   let frameHeight = 120;
   let timeDisplay = new TimeDisplay(height - frameHeight / 2);
 
@@ -103,7 +101,7 @@ const LowerFrame = function () {
     push();
 
     fill(color(97, 103, 122));
-    rect(0, height - frameHeight, frameWidth, frameHeight);
+    rect(0, height - frameHeight, width, frameHeight);
     timeDisplay.setY(height - frameHeight / 2);
     timeDisplay.draw();
 
@@ -127,11 +125,11 @@ const TimeDisplay = function (y) {
     fill(255);
     textSize(20);
     textStyle(BOLD);
-    textFont(fontFiles.keys("fontDigit"));
+    textFont(fontNamed("fontDigit"));
     // musicCurrentTime() : returns Number: currentTime of the soundFile in seconds
-    musicCurrentTime = sounds[playingSound].currentTime();
-    // musicDuration() : returns Number: The duration of the soundFile in seconds
-    musicDuration = sounds[playingSound].duration();
+    musicCurrentTime = player.currentTime();
+    // duration of the sound file in seconds
+    musicDuration = player.duration();
 
     text(
       String("0" + Math.floor(musicCurrentTime / 60)).slice(-2) +

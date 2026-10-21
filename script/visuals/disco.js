@@ -1,49 +1,61 @@
 /* constructor function for the disco visual */
 
-function Disco() {
+class Disco {
   // private
-  let cocktailCup = new Cup(
-    divPanel.size().width / 2,
-    divPanel.size().height - 120,
-    divPanel.size().width / 2,
-    divPanel.size().height / 2
-  );
-  let bubbles = []; // bubbles in the cocktail
-  let lightPlate = new LightPlate(width / 2, height * 0.2);
-  let discoBackground = new DiscoBackground();
+  #cocktailCup;
+  #bubbles = [];
+  #lightPlate;
+  #discoBackground;
 
   // public
-  this.name = "disco";
+  name = "disco";
 
-  // for setup use
-  this.setup = function () {
-    let range = cocktailCup.cocktail.getCocktailRange();
+  constructor() {
+    this.#cocktailCup = new Cup(
+      divPanel.size().width / 2,
+      divPanel.size().height - 120,
+      divPanel.size().width / 2,
+      divPanel.size().height / 2
+    );
+    this.#lightPlate = new LightPlate(width / 2, height * 0.2);
+    this.#discoBackground = new DiscoBackground();
+  }
+
+  spawnBubbles() {
+    let range = this.#cocktailCup.cocktail.getCocktailRange();
 
     for (let i = 0; i < 30; i++)
-      bubbles.push(
+      this.#bubbles.push(
         new Bubble(
           random(range.x.min, range.x.max),
           random(range.y.min, range.y.max),
           30
         )
       );
-  };
+  }
 
   // draw the visual
-  this.draw = function () {
-    let wave = fourier.waveform();
-    let spectrum = fourier.analyze();
+  draw() {
+    player.waveform();
+    player.analyse();
+    this.#discoBackground.draw();
+    this.#cocktailCup.draw();
+    this.drawBubbles();
+    this.#lightPlate.draw();
+  }
 
-    discoBackground.draw();
+  drawBubbles() {
+    if (!player.isPlaying()) {
+      this.#bubbles.length = 0;
+      return;
+    }
+    if (this.#bubbles.length === 0) this.spawnBubbles();
 
-    cocktailCup.draw();
+    let range = this.#cocktailCup.cocktail.getCocktailRange();
+    let bubbleAcceleration = map(player.energy(16, 32), 0, 255, 1, 5);
 
-    // control the movement of bubbles in the cocktail
-    let range = cocktailCup.cocktail.getCocktailRange();
-    let bubbleAcceleration = map(fourier.getEnergy(16, 32), 0, 255, 1, 5);
-
-    // draw the bubbles in cocktail
-    bubbles.forEach((bubble) => {
+    for (let i = this.#bubbles.length - 1; i >= 0; i--) {
+      let bubble = this.#bubbles[i];
       let currentPos = bubble.getPosition();
 
       bubble.draw();
@@ -55,22 +67,23 @@ function Disco() {
           currentPos.y + bubbleAcceleration,
           bubble.getRadius()
         );
-      // but cannot lower than the cup container part
-      else
-        bubble.update(
-          random(range.x.min, range.x.max),
-          range.y.min + 5,
-          map(fourier.getEnergy("lowMid"), 0, 255, 19, 30)
+      else {
+        this.#bubbles.splice(i, 1);
+        this.#bubbles.push(
+          new Bubble(
+            random(range.x.min, range.x.max),
+            range.y.min + 5,
+            map(player.energy("lowMid"), 0, 255, 19, 30)
+          )
         );
-    });
-
-    // draw the lyric plate
-    lightPlate.draw();
-  };
+      }
+    }
+  }
 }
 
 // the cocktail cup
 class Cup {
+  // private
   #position;
   #width;
   #height;
@@ -128,6 +141,7 @@ class Cup {
 
 // cocktail liquid
 class Cocktail {
+  // private
   #position;
   #width;
   #height;
@@ -172,6 +186,7 @@ class Cocktail {
 
 // bubble in the cocktail drinking
 class Bubble {
+  // private
   #position;
   #radius;
 
@@ -207,8 +222,17 @@ class Bubble {
   }
 }
 
+// one timed line from the lyric table
+class Lyric {
+  constructor(time, text) {
+    this.time = time;
+    this.lyric = text;
+  }
+}
+
 // light plate for showing lyrics
 class LightPlate {
+  // private
   #position;
   #glow = function (glowColor, blurriness) {
     drawingContext.shadowBlur = blurriness;
@@ -231,23 +255,33 @@ class LightPlate {
   // load in lyrics from csv file
   onFileload() {
     for (let row = 1; row < this.#loadedTable.getRowCount(); row++)
-      for (
-        let column = 1;
-        column < this.#loadedTable.getColumnCount();
-        column++
-      )
-        this.#lyrics.push({
-          time: this.#loadedTable.getString(row, 0),
-          lyric: this.#loadedTable.getString(row, 1),
-        });
+      this.readLyricRow(row);
   }
 
-  // find the current lyrics based on time
+  readLyricRow(row) {
+    for (
+      let column = 1;
+      column < this.#loadedTable.getColumnCount();
+      column++
+    )
+      this.addLyricEntry(row, column);
+  }
+
+  addLyricEntry(row, column) {
+    this.#lyrics.push(
+      new Lyric(
+        this.#loadedTable.getString(row, 0),
+        this.#loadedTable.getString(row, column)
+      )
+    );
+  }
+
+  // lyric.csv stores each line's start in milliseconds.
+  // player.elapsed() is the time since this visual was selected, so the lyric
+  // clock follows the song rather than the time since the page loaded.
   // return the array index if found, or -1 if not found
   currentLyricIndex() {
-    // onemore timer is needed to call the lyrics out
-    let programTime = millis();
-    let currentTime = programTime - fifthVisualTime;
+    let currentTime = player.elapsed();
 
     for (let i = this.#lyrics.length - 1; i >= 0; i--)
       if (currentTime >= this.#lyrics[i].time) return i;
@@ -275,7 +309,7 @@ class LightPlate {
     strokeWeight(7);
     stroke(255);
     textSize(this.#fontSize);
-    textFont(fontFiles.keys("fontLyrics"));
+    textFont(fontNamed("fontLyrics"));
     textAlign(CENTER, CENTER);
 
     for (let i = 0; i < 6; i++) {
@@ -298,12 +332,12 @@ class LightPlate {
 
   // update the lyrics' backuplight glow w.r.t. music energy in specific range
   update() {
-    this.#glowFactor[0] += random(map(fourier.getEnergy("mid"), 0, 255, -1, 1));
+    this.#glowFactor[0] += random(map(player.energy("mid"), 0, 255, -1, 1));
     this.#glowFactor[1] -= random(
-      map(fourier.getEnergy("bass"), 0, 255, -1, 1)
+      map(player.energy("bass"), 0, 255, -1, 1)
     );
     this.#glowFactor[2] -= random(
-      map(fourier.getEnergy("treble"), 0, 255, -1, 1)
+      map(player.energy("treble"), 0, 255, -1, 1)
     );
   }
 }
@@ -312,22 +346,38 @@ class LightPlate {
 // linearGradient is not p5.js function, this is WebAPI function
 // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/createLinearGradient
 class DiscoBackground {
+  // private
   #position;
-  #color_spectrum_divider;
-  #red_factor;
-  #blue_factor;
-  #green_factor;
+  #colorSpectrumDivider;
+  #redFactor;
+  #blueFactor;
+  #greenFactor;
+  #started = 0;
 
   constructor() {
     this.#position = { x: 0, y: 50 };
-    this.#color_spectrum_divider = 0.5;
-    this.#red_factor = 255;
-    this.#blue_factor = 255;
-    this.#green_factor = 255;
+    this.#colorSpectrumDivider = 0.5;
+    this.#redFactor = 255;
+    this.#blueFactor = 255;
+    this.#greenFactor = 255;
   }
 
   // draw the background
-  async draw() {
+  draw() {
+    const now = millis();
+    if (this.#started === 0) this.#started = now;
+    const elapsed = now - this.#started;
+
+    // each channel starts after its own delay, then follows the sound every frame
+    if (elapsed >= 2000)
+      this.#redFactor = map(noise(player.energy("lowMid")), 0, 1, 200, 255);
+    if (elapsed >= 3000)
+      this.#blueFactor = map(noise(player.energy("highMid")), 0, 1, 200, 255);
+    if (elapsed >= 4000)
+      this.#greenFactor = map(noise(player.energy(16, 32)), 0, 1, 210, 255);
+    if (elapsed >= 5000)
+      this.#colorSpectrumDivider = map(player.energy("mid"), 0, 255, 0.2, 0.8);
+
     let gradient = drawingContext.createLinearGradient(
       this.#position.x,
       this.#position.y,
@@ -335,81 +385,14 @@ class DiscoBackground {
       height - 50 - 120
     );
 
-    gradient.addColorStop(0, color(this.#red_factor, 0, 0));
+    gradient.addColorStop(0, color(this.#redFactor, 0, 0));
     gradient.addColorStop(
-      this.#color_spectrum_divider,
-      color(0, this.#green_factor, 0)
+      this.#colorSpectrumDivider,
+      color(0, this.#greenFactor, 0)
     );
-    gradient.addColorStop(1, color(0, 0, this.#blue_factor));
+    gradient.addColorStop(1, color(0, 0, this.#blueFactor));
 
     drawingContext.fillStyle = gradient;
     rect(this.#position.x, this.#position.y, width, height - 50 - 120);
-
-    // await for sequencing the processes
-    let result_red = await this.changeRed();
-    let result_blue = await this.changeBlue();
-    let result_green = await this.changeGreen();
-    let result = await this.changeSpectrum();
-  }
-
-  // promise part
-  changeSpectrum() {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        this.#color_spectrum_divider = map(
-          fourier.getEnergy("mid"),
-          0,
-          255,
-          0.2,
-          0.8
-        );
-        resolve();
-      }, 5000);
-    });
-  }
-
-  changeRed() {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        this.#red_factor = map(
-          noise(fourier.getEnergy("lowMid")),
-          0,
-          1,
-          200,
-          255
-        );
-        resolve();
-      }, 2000);
-    });
-  }
-
-  changeBlue() {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        this.#blue_factor = map(
-          noise(fourier.getEnergy("highMid")),
-          0,
-          1,
-          200,
-          255
-        );
-        resolve();
-      }, 3000);
-    });
-  }
-
-  changeGreen() {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        this.#green_factor = map(
-          noise(fourier.getEnergy(16, 32)),
-          0,
-          1,
-          210,
-          255
-        );
-        resolve();
-      }, 4000);
-    });
   }
 }

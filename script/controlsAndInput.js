@@ -5,6 +5,12 @@ class ControlsAndInput {
     // flag to determine whether to play or pause after button click and to determine which icon to draw
     this.menuDisplayed = false;
     this.playing = false;
+    this.trackForVisual = {
+      wavepattern: 5,
+      needles: 6,
+      phyllotaxis: 2,
+      disco: 7,
+    };
 
     // arrays of buttons
     this.buttons = {
@@ -25,7 +31,7 @@ class ControlsAndInput {
         120,
         20,
         new PlaySpeedDrawStrategy("faster"),
-        new PlaySpeedHitChcekStrategy("faster")
+        new PlaySpeedHitCheckStrategy("faster")
       ),
 
       slowerButton: new Button(
@@ -34,7 +40,7 @@ class ControlsAndInput {
         120,
         20,
         new PlaySpeedDrawStrategy("slower"),
-        new PlaySpeedHitChcekStrategy("slower")
+        new PlaySpeedHitCheckStrategy("slower")
       ),
 
       // sound control slider
@@ -47,13 +53,58 @@ class ControlsAndInput {
         new VolumeControlCheckStrategy()
       ),
     };
+    this.layout();
   }
+
+  layout() {
+    const y = height - 80;
+    const playW = 20;
+    // speed bars draw a round cap 20px past each end; the play circle
+    // sticks out 22px to the left and 18px to the right of its box
+    const speedCap = 20;
+    const playLeft = 22;
+    const playRight = 18;
+    const breathe = 10;
+    const gapBeforePlay = speedCap + playLeft + breathe;
+    const gapAfterPlay = playRight + speedCap + breathe;
+    const gapBeforeVolume = speedCap + breathe;
+    let speedW = 120;
+    let volumeW = 150;
+    let total =
+      speedW + gapBeforePlay + playW + gapAfterPlay + speedW + gapBeforeVolume + volumeW;
+
+    if (total > width - 16) {
+      const fixed = gapBeforePlay + playW + gapAfterPlay + gapBeforeVolume;
+      const scale = (width - 16 - fixed) / (speedW * 2 + volumeW);
+      speedW = Math.max(80, speedW * scale);
+      volumeW = Math.max(60, volumeW * scale);
+      total =
+        speedW + gapBeforePlay + playW + gapAfterPlay + speedW + gapBeforeVolume + volumeW;
+    }
+
+    let x = Math.max(speedCap + 4, (width - total) / 2);
+    this.buttons.slowerButton.place(x, y, speedW, 20);
+    x += speedW + gapBeforePlay;
+    this.buttons.playbackAndPauseButton.place(x, y, playW, 20);
+    x += playW + gapAfterPlay;
+    this.buttons.fastForwardButton.place(x, y, speedW, 20);
+    x += speedW + gapBeforeVolume;
+    this.buttons.volumeControlSlider.place(x, y, volumeW, 20);
+  }
+
+  // keep the volume knob under the pointer while it is dragged along the slider
+  dragged = function () {
+    return this.buttons.volumeControlSlider.hitCheck();
+  };
 
   // return click checking result
   mousePressed = function () {
     let isPressed = false;
 
     //check if the buttons have been clicked, if not make the visualisation fullscreen
+    if (this.trackHit()) isPressed = true;
+    if (this.menuHit()) isPressed = true;
+
     Object.keys(this.buttons).forEach((key) => {
       if (this.buttons[key].hitCheck()) isPressed = true;
     });
@@ -63,118 +114,42 @@ class ControlsAndInput {
 
   // responds to keyboard presses, keycode the ascii code of the keypressed
   keyPressed = function (keycode) {
-    // when number keys are pressed, select the visuals
+    if (keycode >= 49 && keycode <= 57) {
+      const visNumber = keycode - 49;
+      if (visNumber < vis.visuals.length) this.selectVisualNumber(visNumber);
+      return;
+    }
 
     switch (keycode) {
       // space bar - play and pause the music
       case 32:
-        if (sound.isPlaying()) sound.pause();
-        else {
-          sound.loop();
-          sound.rate(playSpeed);
-        }
+        if (player.isPlaying()) player.pause();
+        else player.startLoop();
         controls.playing = !controls.playing;
         break;
 
-      // number keys - call the visuals
-      case 49:
-      case 50:
-      case 51:
-      case 52:
-      case 53:
-      case 54:
-      case 55:
-      case 56:
-      case 57:
-        let visNumber = keycode - 49;
-
-        try {
-          vis.selectVisual(vis.visuals[visNumber].name);
-
-          // some visuals need to play specific songs
-          if (this.playing)
-            switch (visNumber) {
-              case 1:
-                if (playingSound != 5) {
-                  sound.stop();
-                  playingSound = 5;
-                  sound = sounds[playingSound];
-                  sound.setVolume(playVolume);
-                  sound.loop();
-                }
-                break;
-              case 2:
-                if (playingSound != 6) {
-                  sound.stop();
-                  playingSound = 6;
-                  sound = sounds[playingSound];
-                  sound.setVolume(playVolume);
-                  sound.loop();
-                }
-                break;
-              case 3:
-                if (playingSound != 2) {
-                  sound.stop();
-                  playingSound = 2;
-                  sound = sounds[playingSound];
-                  sound.setVolume(playVolume);
-                  sound.loop();
-                }
-                break;
-              case 4:
-                if (playingSound != 7) {
-                  sound.stop();
-                  playingSound = 7;
-                  sound = sounds[playingSound];
-                  fifthVisualTime = millis();
-                  sound.setVolume(playVolume);
-                  sound.play(); // just play for one time
-                }
-                break;
-              default:
-                break;
-            }
-        } catch {
-          console.error("No such visual");
-        }
-        break;
-
       // left button - go back one song
-      case 37:
-        if (this.playing) {
-          sound.stop();
-          playingSound =
-            playingSound > 0 ? playingSound - 1 : sounds.length - 1;
-          sound = sounds[playingSound];
-          sound.loop();
-          sound.rate(playSpeed);
-          sound.setVolume(0.1);
-        }
+      case 37: {
+        const previous = player.index > 0 ? player.index - 1 : player.count - 1;
+        player.goTo(previous);
         break;
+      }
 
       // right button - go forward one song
-      case 39:
-        if (this.playing) {
-          sound.stop();
-          playingSound =
-            playingSound < sounds.length - 1 ? playingSound + 1 : 0;
-          sound = sounds[playingSound];
-          sound.loop();
-          sound.rate(playSpeed);
-          sound.setVolume(playVolume);
-        }
+      case 39: {
+        const next = player.index < player.count - 1 ? player.index + 1 : 0;
+        player.goTo(next);
         break;
+      }
 
       // "f" button (no shift) - play the music faster
       case 70:
-        playSpeed += 0.1;
-        if (sound.isPlaying()) sound.rate(playSpeed);
+        player.speed += 0.1;
         break;
 
       // "s" button (no shift) - play the music slower
       case 83:
-        playSpeed -= 0.1;
-        if (sound.isPlaying()) sound.rate(playSpeed);
+        player.speed -= 0.1;
         break;
 
       // "m" button (no shift) - show the menu
@@ -184,23 +159,18 @@ class ControlsAndInput {
 
       // up button - make the volume louder
       case 38:
-        playVolume += 0.1;
-        if (playVolume > 1.0) playVolume = 1.0;
+        player.volume = Math.min(1, player.volume + 0.1);
         controls.buttons.volumeControlSlider.drawStrategy.setSliderPos(
-          playVolume
+          player.volume
         );
-        sound.setVolume(playVolume);
-
         break;
 
       // down button - make the volume quieter
       case 40:
-        playVolume -= 0.1;
-        if (playVolume <= 0.1) playVolume = 0.1;
+        player.volume = Math.max(0.1, player.volume - 0.1);
         controls.buttons.volumeControlSlider.drawStrategy.setSliderPos(
-          playVolume
+          player.volume
         );
-        sound.setVolume(playVolume);
         break;
 
       // default: other keys do nothing
@@ -212,6 +182,7 @@ class ControlsAndInput {
   //draws the playback button and potentially the menu
   draw = function () {
     push();
+    this.drawTrackList();
 
     fill("white");
     stroke("black");
@@ -224,7 +195,7 @@ class ControlsAndInput {
 
       fill(255);
       textSize(16);
-      textFont(fontFiles.keys("fontMedium"));
+      textFont(fontNamed("fontMedium"));
       text("Select a visualisation:", 40, 45);
       this.#menu();
       image(logo2, 150 + 150 * (vis.visuals.length + 1), 30, 15, 15);
@@ -232,13 +203,75 @@ class ControlsAndInput {
       pop();
     }
 
-    // draw each buttons
-    Object.keys(this.buttons).forEach((key) => {
-      this.buttons[key].draw();
-    });
+    // speed bars first, then play, so the circle is not painted over
+    ["slowerButton", "fastForwardButton", "volumeControlSlider", "playbackAndPauseButton"].forEach(
+      (key) => this.buttons[key].draw()
+    );
 
     pop();
   };
+
+  trackLabel(index) {
+    return player.pathAt(index).split(/(\\|\/)/g).pop();
+  }
+
+  drawTrackList() {
+    textSize(14);
+    textFont(fontNamed("fontMedium"));
+    textAlign(LEFT, TOP);
+    noStroke();
+    for (let i = 0; i < player.count; i++) {
+      if (i === player.index) fill(136, 196, 255);
+      else fill(255);
+      text(this.trackLabel(i), 16, 70 + i * 22);
+    }
+  }
+
+  trackHit() {
+    textSize(14);
+    textFont(fontNamed("fontMedium"));
+    for (let i = 0; i < player.count; i++) {
+      const y = 70 + i * 22;
+      const labelWidth = textWidth(this.trackLabel(i));
+      if (mouseX > 16 && mouseX < 16 + labelWidth && mouseY > y && mouseY < y + 18) {
+        player.goTo(i);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  selectVisualNumber(visNumber) {
+    const visual = vis.visuals[visNumber];
+    vis.selectVisual(visual.name);
+    if (!this.playing) return;
+
+    const track = this.trackForVisual[visual.name];
+    if (track === undefined || player.index === track) return;
+
+    player.stop();
+    player.select(track);
+    if (visual.name === "disco") player.markNow();
+    player.startLoop();
+  }
+
+  menuHit() {
+    if (!this.menuDisplayed) return false;
+
+    textSize(16);
+    textFont(fontNamed("fontMedium"));
+    for (let i = 0; i < vis.visuals.length; i++) {
+      const label = i + 1 + " : " + vis.visuals[i].name;
+      const x = 150 + 150 * (i + 1);
+      const labelWidth = textWidth(label);
+      if (mouseX > x && mouseX < x + labelWidth && mouseY > 28 && mouseY < 52) {
+        this.selectVisualNumber(i);
+        return true;
+      }
+    }
+
+    return false;
+  }
 
   // private
   // draw out menu items for each visualisation

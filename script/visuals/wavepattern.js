@@ -5,88 +5,81 @@
 // color are controlled by getEnergy() return values
 
 //draw the waveform to the screen
-function WavePattern() {
-  let particles = [];
+class WavePattern {
+  // private
+  #particles = [];
+
   // public
-  // vis name
-  this.name = "wavepattern";
+  name = "wavepattern";
 
   // draw the wave form to the screen
   // to make this as circular shape, not only circle but also beginShape + endShape + vertex can do this
-  this.draw = function () {
-    let wave = fourier.waveform();
-    let spectrum = fourier.analyze();
+  draw() {
+    let wave = player.waveform();
+    player.analyse();
 
-    drawWarmBackground();
+    this.drawWarmBackground();
 
     push();
-
     translate(width / 2, height / 2);
+    this.drawWaveRing(wave, 300, color(209, 64, 9), false);
+    this.drawWaveRing(wave, 150, color(252, 150, 1), true);
+    this.drawParticles();
+    pop();
+  }
 
-    // draw the first waveform
+  drawParticles() {
+    if (!player.isPlaying()) {
+      this.#particles.length = 0;
+      return;
+    }
+
+    let particleColor = color(
+      map(player.energy("lowMid"), 0, 255, 209, 255),
+      map(player.energy("mid"), 0, 255, 64, 255),
+      map(player.energy("highMid"), 0, 255, 9, 255)
+    );
+
+    for (let i = 0; i < 10; i++)
+      this.#particles.push(new Particle(300 + 10, particleColor));
+
+    for (let i = this.#particles.length - 1; i >= 0; i--) {
+      if (this.#particles[i].isBoundry()) this.#particles.splice(i, 1);
+      else {
+        this.#particles[i].draw();
+        this.#particles[i].update(particleColor, player.energy("bass") > 180);
+      }
+    }
+  }
+
+  // wave samples cover 0-180 degrees, so each ring is drawn twice for a full circle
+  drawWaveRing(wave, radius, ringColor, reverse) {
     strokeWeight(8);
     noFill();
-    let sunColor = color(209, 64, 9);
-    stroke(sunColor);
-    // wave is limited in 0 and 180 degrees, hence need to do once more for 180 - 360 degrees
-    for (let half = -1; half <= 1; half += 2) {
-      beginShape();
-      for (let alpha = 0; alpha <= 180; alpha++) {
-        let i = floor(map(alpha, 0, 180, 0, wave.length - 1));
-        let r = 300;
-        let rOffset = map(wave[i], -0.2, 0.2, -100, 100);
-        let x = (r + rOffset) * cos(alpha);
-        let y = (r + rOffset) * sin(alpha) * half;
+    stroke(ringColor);
+    for (let half = -1; half <= 1; half += 2)
+      this.drawWaveHalf(wave, radius, half, reverse);
+  };
 
-        vertex(x, y);
-      }
-      endShape();
+  drawWaveHalf(wave, radius, half, reverse) {
+    beginShape();
+    for (let alpha = 0; alpha <= 180; alpha++) {
+      let i = floor(map(alpha, 0, 180, 0, wave.length - 1));
+      let rOffset = map(wave[i], -0.2, 0.2, -100, 100);
+      let angle = reverse ? 180 - alpha : alpha;
+      let x = (radius + rOffset) * cos(angle);
+      let y = (radius + rOffset) * sin(angle) * half;
+
+      vertex(x, y);
     }
-
-    // draw the second waveform
-    let sunFrameColor = color(252, 150, 1);
-    strokeWeight(8);
-    stroke(sunFrameColor);
-    for (let half = -1; half <= 1; half += 2) {
-      beginShape();
-      for (let alpha = 0; alpha <= 180; alpha++) {
-        let i = floor(map(alpha, 0, 180, 0, wave.length - 1));
-        let r = 150;
-        let rOffset = map(wave[i], -0.2, 0.2, -100, 100);
-        let x = (r + rOffset) * cos(180 - alpha);
-        let y = (r + rOffset) * sin(180 - alpha) * half;
-
-        vertex(x, y);
-      }
-      endShape();
-    }
-
-    // draw the particles
-    let particleColor = color(
-      map(fourier.getEnergy("lowMid"), 0, 255, 209, 255),
-      map(fourier.getEnergy("mid"), 0, 255, 64, 255),
-      map(fourier.getEnergy("highMid"), 0, 255, 9, 255)
-    );
-    for (let i = 0; i < 10; i++) {
-      let p = new Particle(300 + 10, particleColor);
-      particles.push(p);
-    }
-    for (let i = particles.length - 1; i >= 0; i--) {
-      if (particles[i].isBoundry()) particles.splice(i, 1);
-      else {
-        particles[i].draw();
-        particles[i].update(particleColor, fourier.getEnergy("bass") > 180);
-      }
-    }
-
-    pop();
+    endShape();
   };
 
   // make the background looks like near the sun
   // RadialGradient is not p5.js function, this is WebAPI function
   // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/createRadialGradient
 
-  let drawWarmBackground = function () {
+  drawWarmBackground() {
     let gradient = drawingContext.createRadialGradient(
       width / 2,
       height / 2,

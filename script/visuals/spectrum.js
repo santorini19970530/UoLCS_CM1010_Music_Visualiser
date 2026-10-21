@@ -1,132 +1,185 @@
 // this is the use of spectrum to simulate North Pole light
 // the stars position range are also controled by fourier.analyze()
 
-function Spectrum() {
+class Spectrum {
   // private
-  let spectrum;
-  let waveform;
-  let terrainValues = [];
-  let terrainVertexNumbers = { x: 70, y: 40 };
-  let terrainMaxHeight = 100;
-  let terrainParticleDisplacement = { x: 0.0, y: 0.0 };
-  let terrainAmplitude = 0.22;
+  #starsAmountMax = 40;
+  #stars = [];
+  #terrainValues = [];
+  #terrainVertexNumbers = { x: 70, y: 40 };
+  #terrainMaxHeight = 100;
+  #terrainParticleDisplacement = { x: 0.0, y: 0.0 };
+  #terrainAmplitude = 0.22;
+  #graphics;
 
   // public
-  this.name = "spectrum";
+  name = "spectrum";
 
   // call the spectrum
-  this.setSpectrum = function () {
-    spectrum = fourier.analyze();
+  setSpectrum() {
+    return player.analyse();
+  }
 
-    return spectrum;
-  };
+  // terrain is built once; stars exist only while a track is playing
+  setup() {
+    this.#graphics = createGraphics(
+      divPanel.size().width,
+      divPanel.size().height - 120,
+      WEBGL
+    );
+    this.#graphics.clear();
+    this.#graphics.angleMode(DEGREES);
+    this.buildTerrain();
+  }
 
-  // for being called by the p5.js setup
-  // hence the stars and terrain arrays can be initialised
-  this.setup = function () {
-    // prepare the stars array
-    for (let i = 0; i < starsAmountMax; i++)
-      stars.push(
+  resizeGraphics() {
+    this.#graphics.resizeCanvas(
+      divPanel.size().width,
+      divPanel.size().height - 120
+    );
+  }
+
+  createStars() {
+    for (let i = 0; i < this.#starsAmountMax; i++)
+      this.#stars.push(
         new Star(random(0, width), random(50, height - 150), random(5, 10))
       );
+  }
 
-    // prepare the terrain vertex array
-    for (x = 0; x < terrainVertexNumbers.x; x++) {
-      terrainParticleDisplacement.x = 0.0;
-      terrainValues.push([]);
-      for (y = 0; y < terrainVertexNumbers.y; y++) {
-        terrainValues[x][y] = map(
-          noise(terrainParticleDisplacement.x, terrainParticleDisplacement.y),
-          0,
-          1,
-          -terrainMaxHeight,
-          terrainMaxHeight
-        );
-        terrainParticleDisplacement.y += terrainAmplitude;
-      }
-    }
-    terrainParticleDisplacement.x += terrainAmplitude;
-  };
+  // each column is its own row of noise samples
+  buildTerrain() {
+    for (let x = 0; x < this.#terrainVertexNumbers.x; x++)
+      this.buildTerrainColumn(x);
+    this.#terrainParticleDisplacement.x += this.#terrainAmplitude;
+  }
+
+  buildTerrainColumn(x) {
+    this.#terrainParticleDisplacement.x = 0.0;
+    this.#terrainValues.push([]);
+    for (let y = 0; y < this.#terrainVertexNumbers.y; y++)
+      this.setTerrainVertex(x, y);
+  }
+
+  // Neighbouring columns share a noise plane. Stepping y by 0.22 keeps
+  // adjacent hills smooth, and the mapped height stays within ±100.
+  setTerrainVertex(x, y) {
+    this.#terrainValues[x][y] = map(
+      noise(
+        this.#terrainParticleDisplacement.x,
+        this.#terrainParticleDisplacement.y
+      ),
+      0,
+      1,
+      -this.#terrainMaxHeight,
+      this.#terrainMaxHeight
+    );
+    this.#terrainParticleDisplacement.y += this.#terrainAmplitude;
+  }
 
   // draw the visual
-  this.draw = function () {
-    spectrum = this.setSpectrum();
-    waveform = fourier.waveform();
+  draw() {
+    const spectrum = this.setSpectrum();
+    player.waveform();
 
-    // prepare the background
-    drawGradientBackground();
+    this.drawGradientBackground();
+    this.drawStars();
+    this.drawLights(spectrum);
+    this.drawTerrain(spectrum);
+    image(this.#graphics, 0, 0);
+  }
 
-    // draw the stars
-    stars.forEach((star) => {
-      star.draw();
-      spectrum.forEach((frequency) => {
-        star.updatePos(
-          random(0, width),
-          random(map(noise(spectrum[frequency]), 0, 1, 50, height - 120)) + 50
-        );
-      });
-    });
+  // one energy value moves every star once per frame
+  drawStars() {
+    if (!player.isPlaying()) {
+      this.#stars.length = 0;
+      return;
+    }
+    if (this.#stars.length === 0) this.createStars();
 
-    // draw the NorthPole lights
+    const energy = player.energy("treble");
+
+    for (let i = 0; i < this.#stars.length; i++) {
+      this.#stars[i].draw();
+      this.#stars[i].updatePos(
+        random(0, width),
+        random(map(noise(energy), 0, 1, 50, height - 120)) + 50
+      );
+    }
+  }
+
+  drawLights(spectrum) {
     push();
     noStroke();
-    for (let i = 0; i < spectrum.length; i++) {
-      let lineX = map(i, 0, spectrum.length, 0, width);
-      let lineY = map(spectrum[i], 0, 255, 50, (height - 150) / 2, true);
-
-      let line_color = color(
-        0,
-        map(i, 0, spectrum.length, 100, 255),
-        map(i, 0, spectrum.length, 100, 255)
-      );
-      fill(line_color);
-      for (let j = 0; j < 20; j++)
-        ellipse(lineX, lineY + 8 * j, map(spectrum[i], 0, 255, 0, 8));
-    }
+    for (let i = 0; i < spectrum.length; i++) this.drawLightColumn(spectrum, i);
     pop();
+  };
 
-    // draw the 3D terrain
-    threeDCanvas.clear();
-    threeDCanvas.push();
-    threeDCanvas.translate(
-      -threeDCanvas.width / 2,
-      threeDCanvas.height / 2 - 520,
+  drawLightColumn(spectrum, i) {
+    let lineX = map(i, 0, spectrum.length, 0, width);
+    let lineY = map(spectrum[i], 0, 255, 50, (height - 150) / 2, true);
+    let lineColor = color(
+      0,
+      map(i, 0, spectrum.length, 100, 255),
+      map(i, 0, spectrum.length, 100, 255)
+    );
+
+    fill(lineColor);
+    for (let j = 0; j < 20; j++)
+      ellipse(lineX, lineY + 8 * j, map(spectrum[i], 0, 255, 0, 8));
+  };
+
+  drawTerrain(spectrum) {
+    this.#graphics.clear();
+    this.#graphics.push();
+    this.#graphics.translate(
+      -this.#graphics.width / 2,
+      this.#graphics.height / 2 - 520,
       0
     );
-    threeDCanvas.stroke(color(0, 0, 255));
-    threeDCanvas.fill(color(0, 30, 200));
-    threeDCanvas.rotateX(80);
+    this.#graphics.stroke(color(0, 0, 255));
+    this.#graphics.fill(color(0, 30, 200));
+    this.#graphics.rotateX(80);
 
-    // prepare the terrain vertex array
-    for (let x = 0; x < terrainVertexNumbers.x; x++) {
-      let spectrumIndex = Math.floor(
-        map(x, 0, terrainVertexNumbers.x, 0, spectrum.length)
-      );
+    this.fillTerrainHeights(spectrum);
+    this.drawTerrainMesh();
 
-      let amplitude = spectrum[spectrumIndex];
-      let vertexHeight = map(amplitude, 0, 255, 0, terrainMaxHeight);
+    this.#graphics.pop();
+  }
 
-      for (let y = 0; y < terrainVertexNumbers.y; y++)
-        terrainValues[x][y] = vertexHeight;
+  fillTerrainHeights(spectrum) {
+    for (let x = 0; x < this.#terrainVertexNumbers.x; x++)
+      this.fillTerrainColumn(x, spectrum);
+  }
+
+  fillTerrainColumn(x, spectrum) {
+    let spectrumIndex = Math.floor(
+      map(x, 0, this.#terrainVertexNumbers.x, 0, spectrum.length)
+    );
+    let amplitude = spectrum[spectrumIndex];
+    let vertexHeight = map(amplitude, 0, 255, 0, this.#terrainMaxHeight);
+
+    for (let y = 0; y < this.#terrainVertexNumbers.y; y++)
+      this.#terrainValues[x][y] = vertexHeight;
+  }
+
+  drawTerrainMesh() {
+    for (let y = 0; y < this.#terrainVertexNumbers.y; y++)
+      this.drawTerrainRow(y);
+  }
+
+  drawTerrainRow(y) {
+    this.#graphics.beginShape(this.#graphics.TRIANGLE_STRIP);
+    for (let x = 0; x < this.#terrainVertexNumbers.x; x++) {
+      this.#graphics.vertex(x * 50, y * 20, this.#terrainValues[x][y]);
+      this.#graphics.vertex(x * 50, (y + 1) * 20, this.#terrainValues[x][y]);
     }
-
-    // draw the terrain vertex
-    for (let y = 0; y < terrainVertexNumbers.y; y++) {
-      threeDCanvas.beginShape(TRIANGLE_STRIP);
-      for (let x = 0; x < terrainVertexNumbers.x; x++) {
-        threeDCanvas.vertex(x * 50, y * 20, terrainValues[x][y]);
-        threeDCanvas.vertex(x * 50, (y + 1) * 20, terrainValues[x][y]);
-      }
-      threeDCanvas.endShape();
-    }
-
-    threeDCanvas.pop();
-  };
+    this.#graphics.endShape();
+  }
 
   // make the background looks like in the North Pole
   // linearGradient is not p5.js function, this is WebAPI function
   // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/createLinearGradient
-  let drawGradientBackground = function () {
+  drawGradientBackground() {
     let gradient = drawingContext.createLinearGradient(
       0,
       50,
@@ -190,7 +243,7 @@ class Star {
     this.#updatePosY(newY);
   }
 
-  // private methods
+  // private
   #updatePosX(newX) {
     this.#origin.x = newX - this.#size / 2;
     this.#oppositeCorner.x = newX + this.#size / 2;

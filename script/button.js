@@ -23,7 +23,7 @@ class Button {
     this.#setPosition(x, y, buttonWidth, buttonHeight);
   }
 
-  // private : set position og the button
+  // private
   #setPosition(x, y, buttonWidth, buttonHeight) {
     this.#x = x;
     this.#y = y;
@@ -42,6 +42,10 @@ class Button {
   }
 
   // public
+  place(x, y, buttonWidth, buttonHeight) {
+    this.#setPosition(x, y, buttonWidth, buttonHeight);
+  }
+
   // draw the button, by caling the draw strategy
   draw() {
     this.drawStrategy.draw();
