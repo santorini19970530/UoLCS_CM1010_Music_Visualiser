@@ -134,25 +134,18 @@ class ControlsAndInput {
         break;
 
       // left button - go back one song
-      case 37:
-        if (this.playing) {
-          const previous = player.index > 0 ? player.index - 1 : player.count - 1;
-          player.stop();
-          player.select(previous);
-          player.loopCurrent();
-          player.outputVolume(0.1);
-        }
+      case 37: {
+        const previous = player.index > 0 ? player.index - 1 : player.count - 1;
+        player.goTo(previous);
         break;
+      }
 
       // right button - go forward one song
-      case 39:
-        if (this.playing) {
-          const next = player.index < player.count - 1 ? player.index + 1 : 0;
-          player.stop();
-          player.select(next);
-          player.startLoop();
-        }
+      case 39: {
+        const next = player.index < player.count - 1 ? player.index + 1 : 0;
+        player.goTo(next);
         break;
+      }
 
       // "f" button (no shift) - play the music faster
       case 70:

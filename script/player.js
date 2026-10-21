@@ -50,7 +50,7 @@ class Player {
   }
 
   set speed(value) {
-    this.#speed = value;
+    this.#speed = Math.min(2, Math.max(0.5, value));
     if (this.isPlaying()) this.current().rate(this.#speed);
   }
 
@@ -99,10 +99,6 @@ class Player {
     this.#index = index;
   }
 
-  loopCurrent() {
-    this.current().loop();
-  }
-
   startLoop() {
     const track = this.current();
     track.setVolume(this.#volume);
@@ -117,9 +113,16 @@ class Player {
     track.rate(this.#speed);
   }
 
-  // sets the sound output only, leaving the stored volume unchanged
-  outputVolume(level) {
-    this.current().setVolume(level);
+  // switch track; keep playing only if audio was already playing
+  goTo(index) {
+    const wasPlaying = this.isPlaying();
+    this.stop();
+    this.select(index);
+    if (wasPlaying) this.startLoop();
+    else {
+      this.current().setVolume(this.#volume);
+      this.current().rate(this.#speed);
+    }
   }
 
   markNow() {
