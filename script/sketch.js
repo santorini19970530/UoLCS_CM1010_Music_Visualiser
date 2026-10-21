@@ -122,6 +122,10 @@ function draw() {
   controls.draw();
 }
 
+function mouseDragged() {
+  controls.dragged();
+}
+
 function mouseClicked() {
   // based on the click position checking result, make the window fullscreen or revert to windowed
   if (!controls.mousePressed()) {

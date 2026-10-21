@@ -49,6 +49,11 @@ class ControlsAndInput {
     };
   }
 
+  // keep the volume knob under the pointer while it is dragged along the slider
+  dragged = function () {
+    return this.buttons.volumeControlSlider.hitCheck();
+  };
+
   // return click checking result
   mousePressed = function () {
     let isPressed = false;

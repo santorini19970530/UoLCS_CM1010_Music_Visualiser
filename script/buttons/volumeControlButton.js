@@ -47,8 +47,14 @@ class VolumeControlCheckStrategy {
     let y1 = this.y - 20;
     let y2 = this.y + this.height + 20;
 
-    // nothing is done when mouse press on the volume control slider
     if (mouseX > x1 && mouseX < x2 && mouseY > y1 && mouseY < y2) {
+      const level = constrain(
+        map(mouseX, this.x, this.x + this.width, 0.1, 1),
+        0.1,
+        1
+      );
+      player.volume = level;
+      controls.buttons.volumeControlSlider.drawStrategy.setSliderPos(level);
       return true;
     }
 
