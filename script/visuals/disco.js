@@ -352,10 +352,7 @@ class DiscoBackground {
   #redFactor;
   #blueFactor;
   #greenFactor;
-  #lastRed = 0;
-  #lastBlue = 0;
-  #lastGreen = 0;
-  #lastDivider = 0;
+  #started = 0;
 
   constructor() {
     this.#position = { x: 0, y: 50 };
@@ -367,6 +364,20 @@ class DiscoBackground {
 
   // draw the background
   draw() {
+    const now = millis();
+    if (this.#started === 0) this.#started = now;
+    const elapsed = now - this.#started;
+
+    // each channel starts after its own delay, then follows the sound every frame
+    if (elapsed >= 2000)
+      this.#redFactor = map(noise(player.energy("lowMid")), 0, 1, 200, 255);
+    if (elapsed >= 3000)
+      this.#blueFactor = map(noise(player.energy("highMid")), 0, 1, 200, 255);
+    if (elapsed >= 4000)
+      this.#greenFactor = map(noise(player.energy(16, 32)), 0, 1, 210, 255);
+    if (elapsed >= 5000)
+      this.#colorSpectrumDivider = map(player.energy("mid"), 0, 255, 0.2, 0.8);
+
     let gradient = drawingContext.createLinearGradient(
       this.#position.x,
       this.#position.y,
@@ -383,31 +394,5 @@ class DiscoBackground {
 
     drawingContext.fillStyle = gradient;
     rect(this.#position.x, this.#position.y, width, height - 50 - 120);
-
-    const now = millis();
-    if (this.#lastRed === 0) {
-      this.#lastRed = now;
-      this.#lastBlue = now;
-      this.#lastGreen = now;
-      this.#lastDivider = now;
-    }
-
-    // same gaps as before: red 2s, blue 3s, green 4s, divider 5s
-    if (now - this.#lastRed >= 2000) {
-      this.#redFactor = map(noise(player.energy("lowMid")), 0, 1, 200, 255);
-      this.#lastRed = now;
-    }
-    if (now - this.#lastBlue >= 3000) {
-      this.#blueFactor = map(noise(player.energy("highMid")), 0, 1, 200, 255);
-      this.#lastBlue = now;
-    }
-    if (now - this.#lastGreen >= 4000) {
-      this.#greenFactor = map(noise(player.energy(16, 32)), 0, 1, 210, 255);
-      this.#lastGreen = now;
-    }
-    if (now - this.#lastDivider >= 5000) {
-      this.#colorSpectrumDivider = map(player.energy("mid"), 0, 255, 0.2, 0.8);
-      this.#lastDivider = now;
-    }
   }
 }
