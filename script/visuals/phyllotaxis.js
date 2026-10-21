@@ -33,19 +33,21 @@ function Phyllotaxis() {
     let x = r * cos(alpha);
     let y = r * sin(alpha);
 
-    dots.push({
-      x: x,
-      y: y,
-      color: color(
-        fourier.getEnergy("bass"),
-        fourier.getEnergy("mid"),
-        fourier.getEnergy("treble")
-      ),
-    });
-    dots.forEach((dot) => {
-      fill(dot.color);
-      ellipse(dot.x, dot.y, 10, 10);
-    });
+    dots.push(
+      new Dot(
+        x,
+        y,
+        color(
+          fourier.getEnergy("bass"),
+          fourier.getEnergy("mid"),
+          fourier.getEnergy("treble")
+        )
+      )
+    );
+    for (let i = dots.length - 1; i >= 0; i--) {
+      if (dots[i].isOffScreen()) dots.splice(i, 1);
+      else dots[i].draw();
+    }
     n++;
 
     pop();
@@ -156,26 +158,52 @@ function Phyllotaxis() {
   };
 }
 
+// one flower dot; removed once it leaves the canvas
+class Dot {
+  constructor(x, y, dotColor) {
+    this.x = x;
+    this.y = y;
+    this.color = dotColor;
+  }
+
+  draw() {
+    fill(this.color);
+    ellipse(this.x, this.y, 10, 10);
+  }
+
+  isOffScreen() {
+    const screenX = width / 2 + this.x;
+    const screenY = height / 2 + this.y;
+
+    return screenX < 0 || screenX > width || screenY < 50 || screenY > height - 120;
+  }
+}
+
 // simulation of Logo language turtle
+// position and heading are restored only by popping the stack
 class Turtle {
+  #coordinateVector;
+  #headingVector;
+  #stateStack;
+
   constructor(x = 0, y = 0, heading = 0) {
-    this.coordinateVector = createVector(x, y);
-    this.headingVector = createVector(1, 0).rotate(heading);
-    this.stateStack = [];
+    this.#coordinateVector = createVector(x, y);
+    this.#headingVector = createVector(1, 0).rotate(heading);
+    this.#stateStack = [];
   }
 
   // return the location of the turtle
   coordinate() {
-    return this.coordinateVector.copy();
+    return this.#coordinateVector.copy();
   }
 
   // ask the turgle more forward (can backword)
   // return a vector with from and destination coordinates
   forward(length) {
     const from = this.coordinate();
-    const v = p5.Vector.mult(this.headingVector, length);
+    const v = p5.Vector.mult(this.#headingVector, length);
 
-    this.coordinateVector.add(v);
+    this.#coordinateVector.add(v);
     const to = this.coordinate();
 
     return { from, to };
@@ -183,24 +211,25 @@ class Turtle {
 
   // ask the turtle to turn
   turn(angle) {
-    this.headingVector.rotate(angle);
+    this.#headingVector.rotate(angle);
   }
 
   // store steps into memory stack
   pushStep() {
-    this.stateStack.push({
-      x: this.coordinateVector.x,
-      y: this.coordinateVector.y,
-      heading: this.headingVector.heading(),
+    this.#stateStack.push({
+      x: this.#coordinateVector.x,
+      y: this.#coordinateVector.y,
+      heading: this.#headingVector.heading(),
     });
   }
 
   // remove from the memory stack the steps
   popStep() {
-    const { x, y, heading } = this.stateStack.pop();
+    const step = this.#stateStack.pop();
+    if (!step) return;
 
-    this.coordinateVector.x = x;
-    this.coordinateVector.y = y;
-    this.headingVector.setHeading(radians(heading));
+    this.#coordinateVector.x = step.x;
+    this.#coordinateVector.y = step.y;
+    this.#headingVector.setHeading(radians(step.heading));
   }
 }

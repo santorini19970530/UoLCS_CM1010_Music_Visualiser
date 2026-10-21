@@ -43,7 +43,8 @@ function Disco() {
     let bubbleAcceleration = map(fourier.getEnergy(16, 32), 0, 255, 1, 5);
 
     // draw the bubbles in cocktail
-    bubbles.forEach((bubble) => {
+    for (let i = bubbles.length - 1; i >= 0; i--) {
+      let bubble = bubbles[i];
       let currentPos = bubble.getPosition();
 
       bubble.draw();
@@ -55,14 +56,17 @@ function Disco() {
           currentPos.y + bubbleAcceleration,
           bubble.getRadius()
         );
-      // but cannot lower than the cup container part
-      else
-        bubble.update(
-          random(range.x.min, range.x.max),
-          range.y.min + 5,
-          map(fourier.getEnergy("lowMid"), 0, 255, 19, 30)
+      else {
+        bubbles.splice(i, 1);
+        bubbles.push(
+          new Bubble(
+            random(range.x.min, range.x.max),
+            range.y.min + 5,
+            map(fourier.getEnergy("lowMid"), 0, 255, 19, 30)
+          )
         );
-    });
+      }
+    }
 
     // draw the lyric plate
     lightPlate.draw();
@@ -207,6 +211,14 @@ class Bubble {
   }
 }
 
+// one timed line from the lyric table
+class Lyric {
+  constructor(time, text) {
+    this.time = time;
+    this.lyric = text;
+  }
+}
+
 // light plate for showing lyrics
 class LightPlate {
   #position;
@@ -244,10 +256,12 @@ class LightPlate {
   }
 
   addLyricEntry(row, column) {
-    this.#lyrics.push({
-      time: this.#loadedTable.getString(row, 0),
-      lyric: this.#loadedTable.getString(row, column),
-    });
+    this.#lyrics.push(
+      new Lyric(
+        this.#loadedTable.getString(row, 0),
+        this.#loadedTable.getString(row, column)
+      )
+    );
   }
 
   // find the current lyrics based on time

@@ -5,6 +5,8 @@ function Spectrum() {
   // private
   let spectrum;
   let waveform;
+  const starsAmountMax = 40;
+  let stars = [];
   let terrainValues = [];
   let terrainVertexNumbers = { x: 70, y: 40 };
   let terrainMaxHeight = 100;

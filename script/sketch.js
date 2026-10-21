@@ -54,9 +54,6 @@ var divPanel;
 var music_player = null;
 // for the 3D canvas in the first visual
 var threeDCanvas;
-// control the amount of stars
-const starsAmountMax = 40;
-var stars = [];
 // record the time before calling the fifth visual
 var fifthVisualTime;
 
