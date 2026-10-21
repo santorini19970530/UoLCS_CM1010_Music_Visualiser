@@ -309,7 +309,7 @@ class LightPlate {
     strokeWeight(7);
     stroke(255);
     textSize(this.#fontSize);
-    textFont(fontFiles.keys("fontLyrics"));
+    textFont(fontNamed("fontLyrics"));
     textAlign(CENTER, CENTER);
 
     for (let i = 0; i < 6; i++) {

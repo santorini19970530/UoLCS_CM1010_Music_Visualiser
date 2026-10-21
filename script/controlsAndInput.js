@@ -199,7 +199,7 @@ class ControlsAndInput {
 
       fill(255);
       textSize(16);
-      textFont(fontFiles.keys("fontMedium"));
+      textFont(fontNamed("fontMedium"));
       text("Select a visualisation:", 40, 45);
       this.#menu();
       image(logo2, 150 + 150 * (vis.visuals.length + 1), 30, 15, 15);

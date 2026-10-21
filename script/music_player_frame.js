@@ -38,7 +38,7 @@ const UpperFrame = function () {
     stroke(0);
     fill(255);
     textSize(16);
-    textFont(fontFiles.keys("fontMedium"));
+    textFont(fontNamed("fontMedium"));
     textAlign(LEFT);
     text("MUSIC VISUALISER", 30, 20);
     textAlign(CENTER);
@@ -127,7 +127,7 @@ const TimeDisplay = function (y) {
     fill(255);
     textSize(20);
     textStyle(BOLD);
-    textFont(fontFiles.keys("fontDigit"));
+    textFont(fontNamed("fontDigit"));
     // musicCurrentTime() : returns Number: currentTime of the soundFile in seconds
     musicCurrentTime = player.currentTime();
     // duration of the sound file in seconds

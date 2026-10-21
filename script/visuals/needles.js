@@ -104,7 +104,7 @@ class Needles {
         stroke(color(200, 200, 200));
         strokeWeight(1);
         fill(color(254, 254, 254));
-        textFont(fontFiles.keys("fontDigit"));
+        textFont(fontNamed("fontDigit"));
         textSize(15);
         text(String(Math.floor(map(alpha, 0, 360, 0, 255))), x, y);
         pop();

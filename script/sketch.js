@@ -63,10 +63,18 @@ function preload() {
   fontFiles.forEach((source) =>
     loadFont(
       source.path,
-      () => successLoadFile(source.path.split(/(\\|\/)/g).pop()),
+      (font) => {
+        source.font = font;
+        successLoadFile(source.path.split(/(\\|\/)/g).pop());
+      },
       () => errorLoadFile(source.path.split(/(\\|\/)/g).pop())
     )
   );
+}
+
+function fontNamed(name) {
+  const entry = fontFiles.find((file) => file.name === name);
+  return entry ? entry.font : undefined;
 }
 
 // callbacks for ensuring the sounds are correctly loaded
