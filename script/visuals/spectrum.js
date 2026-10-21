@@ -33,6 +33,13 @@ class Spectrum {
     this.buildTerrain();
   }
 
+  resizeGraphics() {
+    this.#graphics.resizeCanvas(
+      divPanel.size().width,
+      divPanel.size().height - 120
+    );
+  }
+
   createStars() {
     for (let i = 0; i < this.#starsAmountMax; i++)
       this.#stars.push(

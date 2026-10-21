@@ -135,15 +135,16 @@ function mouseDragged() {
 }
 
 function mouseClicked() {
-  // based on the click position checking result, make the window fullscreen or revert to windowed
-  if (!controls.mousePressed()) {
-    let fullScreen = fullscreen();
-    fullscreen(!fullScreen);
-  }
+  controls.mousePressed();
 }
 
 // send signal to contols signal
 function keyPressed() {
+  // g toggles fullscreen; other keys go to the player controls
+  if (keyCode === 71) {
+    fullscreen(!fullscreen());
+    return;
+  }
   controls.keyPressed(keyCode);
 }
 
@@ -151,4 +152,6 @@ function keyPressed() {
 function windowResized() {
   resizeCanvas(divPanel.size().width, divPanel.size().height);
   background(color(39, 40, 41));
+  controls.layout();
+  vis.visuals[0].resizeGraphics();
 }

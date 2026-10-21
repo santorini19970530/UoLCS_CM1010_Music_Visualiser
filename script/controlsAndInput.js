@@ -55,6 +55,15 @@ class ControlsAndInput {
     };
   }
 
+  layout() {
+    const mid = width / 2;
+    const y = height - 80;
+    this.buttons.playbackAndPauseButton.place(mid, y, 20, 20);
+    this.buttons.fastForwardButton.place(mid + 100, y, 120, 20);
+    this.buttons.slowerButton.place(mid - 200, y, 120, 20);
+    this.buttons.volumeControlSlider.place(mid + 300, y, 150, 20);
+  }
+
   // keep the volume knob under the pointer while it is dragged along the slider
   dragged = function () {
     return this.buttons.volumeControlSlider.hitCheck();
@@ -65,6 +74,7 @@ class ControlsAndInput {
     let isPressed = false;
 
     //check if the buttons have been clicked, if not make the visualisation fullscreen
+    if (this.trackHit()) isPressed = true;
     if (this.menuHit()) isPressed = true;
 
     Object.keys(this.buttons).forEach((key) => {
@@ -144,6 +154,7 @@ class ControlsAndInput {
   //draws the playback button and potentially the menu
   draw = function () {
     push();
+    this.drawTrackList();
 
     fill("white");
     stroke("black");
@@ -171,6 +182,36 @@ class ControlsAndInput {
 
     pop();
   };
+
+  trackLabel(index) {
+    return player.pathAt(index).split(/(\\|\/)/g).pop();
+  }
+
+  drawTrackList() {
+    textSize(14);
+    textFont(fontNamed("fontMedium"));
+    textAlign(LEFT, TOP);
+    noStroke();
+    for (let i = 0; i < player.count; i++) {
+      if (i === player.index) fill(136, 196, 255);
+      else fill(255);
+      text(this.trackLabel(i), 16, 70 + i * 22);
+    }
+  }
+
+  trackHit() {
+    textSize(14);
+    textFont(fontNamed("fontMedium"));
+    for (let i = 0; i < player.count; i++) {
+      const y = 70 + i * 22;
+      const labelWidth = textWidth(this.trackLabel(i));
+      if (mouseX > 16 && mouseX < 16 + labelWidth && mouseY > y && mouseY < y + 18) {
+        player.goTo(i);
+        return true;
+      }
+    }
+    return false;
+  }
 
   selectVisualNumber(visNumber) {
     const visual = vis.visuals[visNumber];

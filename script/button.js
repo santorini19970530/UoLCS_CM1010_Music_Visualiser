@@ -42,6 +42,10 @@ class Button {
   }
 
   // public
+  place(x, y, buttonWidth, buttonHeight) {
+    this.#setPosition(x, y, buttonWidth, buttonHeight);
+  }
+
   // draw the button, by caling the draw strategy
   draw() {
     this.drawStrategy.draw();

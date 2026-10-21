@@ -26,7 +26,6 @@ class MusicPlayerFrame {
 // upper frame
 const UpperFrame = function () {
   // private
-  let frameWidth = divPanel.size().width;
   let frameHeight = 50;
   let fileName = "";
 
@@ -76,7 +75,7 @@ const UpperFrame = function () {
     push();
 
     fill(color(97, 103, 122));
-    rect(0, 0, frameWidth, frameHeight);
+    rect(0, 0, width, frameHeight);
 
     strokeWeight(2);
     stroke(color(50, 50, 50));
@@ -93,7 +92,6 @@ const UpperFrame = function () {
 // lower framw
 const LowerFrame = function () {
   // private
-  let frameWidth = divPanel.size().width;
   let frameHeight = 120;
   let timeDisplay = new TimeDisplay(height - frameHeight / 2);
 
@@ -103,7 +101,7 @@ const LowerFrame = function () {
     push();
 
     fill(color(97, 103, 122));
-    rect(0, height - frameHeight, frameWidth, frameHeight);
+    rect(0, height - frameHeight, width, frameHeight);
     timeDisplay.setY(height - frameHeight / 2);
     timeDisplay.draw();
 
