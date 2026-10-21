@@ -58,26 +58,37 @@ class ControlsAndInput {
 
   layout() {
     const y = height - 80;
-    const gap = 12;
     const playW = 20;
+    // speed bars draw a round cap 20px past each end; the play circle
+    // sticks out 22px to the left and 18px to the right of its box
+    const speedCap = 20;
+    const playLeft = 22;
+    const playRight = 18;
+    const breathe = 10;
+    const gapBeforePlay = speedCap + playLeft + breathe;
+    const gapAfterPlay = playRight + speedCap + breathe;
+    const gapBeforeVolume = speedCap + breathe;
     let speedW = 120;
     let volumeW = 150;
-    let total = speedW * 2 + volumeW + playW + gap * 3;
+    let total =
+      speedW + gapBeforePlay + playW + gapAfterPlay + speedW + gapBeforeVolume + volumeW;
 
     if (total > width - 16) {
-      const scale = (width - 16 - playW - gap * 3) / (speedW * 2 + volumeW);
-      speedW = Math.max(36, speedW * scale);
-      volumeW = Math.max(48, volumeW * scale);
-      total = speedW * 2 + volumeW + playW + gap * 3;
+      const fixed = gapBeforePlay + playW + gapAfterPlay + gapBeforeVolume;
+      const scale = (width - 16 - fixed) / (speedW * 2 + volumeW);
+      speedW = Math.max(80, speedW * scale);
+      volumeW = Math.max(60, volumeW * scale);
+      total =
+        speedW + gapBeforePlay + playW + gapAfterPlay + speedW + gapBeforeVolume + volumeW;
     }
 
-    let x = Math.max(8, (width - total) / 2);
+    let x = Math.max(speedCap + 4, (width - total) / 2);
     this.buttons.slowerButton.place(x, y, speedW, 20);
-    x += speedW + gap;
+    x += speedW + gapBeforePlay;
     this.buttons.playbackAndPauseButton.place(x, y, playW, 20);
-    x += playW + gap;
+    x += playW + gapAfterPlay;
     this.buttons.fastForwardButton.place(x, y, speedW, 20);
-    x += speedW + gap;
+    x += speedW + gapBeforeVolume;
     this.buttons.volumeControlSlider.place(x, y, volumeW, 20);
   }
 
@@ -192,10 +203,10 @@ class ControlsAndInput {
       pop();
     }
 
-    // draw each buttons
-    Object.keys(this.buttons).forEach((key) => {
-      this.buttons[key].draw();
-    });
+    // speed bars first, then play, so the circle is not painted over
+    ["slowerButton", "fastForwardButton", "volumeControlSlider", "playbackAndPauseButton"].forEach(
+      (key) => this.buttons[key].draw()
+    );
 
     pop();
   };
