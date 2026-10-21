@@ -53,15 +53,32 @@ class ControlsAndInput {
         new VolumeControlCheckStrategy()
       ),
     };
+    this.layout();
   }
 
   layout() {
-    const mid = width / 2;
     const y = height - 80;
-    this.buttons.playbackAndPauseButton.place(mid, y, 20, 20);
-    this.buttons.fastForwardButton.place(mid + 100, y, 120, 20);
-    this.buttons.slowerButton.place(mid - 200, y, 120, 20);
-    this.buttons.volumeControlSlider.place(mid + 300, y, 150, 20);
+    const gap = 12;
+    const playW = 20;
+    let speedW = 120;
+    let volumeW = 150;
+    let total = speedW * 2 + volumeW + playW + gap * 3;
+
+    if (total > width - 16) {
+      const scale = (width - 16 - playW - gap * 3) / (speedW * 2 + volumeW);
+      speedW = Math.max(36, speedW * scale);
+      volumeW = Math.max(48, volumeW * scale);
+      total = speedW * 2 + volumeW + playW + gap * 3;
+    }
+
+    let x = Math.max(8, (width - total) / 2);
+    this.buttons.slowerButton.place(x, y, speedW, 20);
+    x += speedW + gap;
+    this.buttons.playbackAndPauseButton.place(x, y, playW, 20);
+    x += playW + gap;
+    this.buttons.fastForwardButton.place(x, y, speedW, 20);
+    x += speedW + gap;
+    this.buttons.volumeControlSlider.place(x, y, volumeW, 20);
   }
 
   // keep the volume knob under the pointer while it is dragged along the slider
