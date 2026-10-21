@@ -1,31 +1,7 @@
 /*
- * Midterm Project of CM1010, September 2023 Term
- * Student Name: NGAI, Chi Hung
- * Student Number: 220227964
- *
- * My development environment
- *
- *  - Macbook Air 13 inch M1 chip
- *
- *  - MavOS Terminal, for file manipulation and calling php server
- *
- *  - iTerm2: for calling neovim editor
- *
- *  - neovim v0.94
- *
- *  - php v8.2.12
- *
- *  - p5.js v1.8.0 October 25, 2023
- *
- *  - p5.sound v1.0.1 - 2021-05-25
- *
- *  - browser : Google Chrome
- *
- *  - screen recorder : QuickTime Player
- *
- *  - working file stored on git : https://github.com/santorini19970530/UoLCS_CM1010_Music_Visualiser
- *
- *  - my monitor Acer VG280K, resolution : 6016 * 3384
+ * CM1010 final project
+ * Student: NGAI, Chi Hung (220227964)
+ * p5.js 1.8.0, p5.sound 1.0.1
  */
 
 //global for the controls and input

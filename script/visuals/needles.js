@@ -70,7 +70,7 @@ function Needles() {
     }
   };
 
-  // private method()
+  // private
   // draw the graph ticks on an indivisual plot
   let ticks = function () {
     let tickRadius = radius - 20;

@@ -15,7 +15,7 @@ class Music_Player_Frame {
     this.#lowFrame = new LowerFrame();
   }
 
-  //public
+  // public
   draw = () => {
     this.#upFrame.draw();
     this.#lowFrame.draw();
@@ -25,7 +25,7 @@ class Music_Player_Frame {
 // set up constructors of the frames
 // upper frame
 const UpperFrame = function () {
-  //private
+  // private
   let frameWidth = divPanel.size().width;
   let frameHeight = 50;
   let fileName = "";
@@ -92,7 +92,7 @@ const UpperFrame = function () {
 
 // lower framw
 const LowerFrame = function () {
-  //private
+  // private
   let frameWidth = divPanel.size().width;
   let frameHeight = 120;
   let timeDisplay = new TimeDisplay(height - frameHeight / 2);

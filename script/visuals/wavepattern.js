@@ -6,7 +6,9 @@
 
 //draw the waveform to the screen
 function WavePattern() {
+  // private
   let particles = [];
+
   // public
   // vis name
   this.name = "wavepattern";

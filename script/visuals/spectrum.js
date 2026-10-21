@@ -51,6 +51,8 @@ function Spectrum() {
       this.setTerrainVertex(x, y);
   };
 
+  // Neighbouring columns share a noise plane. Stepping y by 0.22 keeps
+  // adjacent hills smooth, and the mapped height stays within ±100.
   this.setTerrainVertex = function (x, y) {
     terrainValues[x][y] = map(
       noise(terrainParticleDisplacement.x, terrainParticleDisplacement.y),
@@ -221,7 +223,7 @@ class Star {
     this.#updatePosY(newY);
   }
 
-  // private methods
+  // private
   #updatePosX(newX) {
     this.#origin.x = newX - this.#size / 2;
     this.#oppositeCorner.x = newX + this.#size / 2;

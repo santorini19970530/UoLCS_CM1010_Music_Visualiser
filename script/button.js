@@ -23,7 +23,7 @@ class Button {
     this.#setPosition(x, y, buttonWidth, buttonHeight);
   }
 
-  // private : set position og the button
+  // private
   #setPosition(x, y, buttonWidth, buttonHeight) {
     this.#x = x;
     this.#y = y;

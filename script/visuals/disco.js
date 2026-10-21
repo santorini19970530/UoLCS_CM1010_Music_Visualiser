@@ -75,6 +75,7 @@ function Disco() {
 
 // the cocktail cup
 class Cup {
+  // private
   #position;
   #width;
   #height;
@@ -132,6 +133,7 @@ class Cup {
 
 // cocktail liquid
 class Cocktail {
+  // private
   #position;
   #width;
   #height;
@@ -176,6 +178,7 @@ class Cocktail {
 
 // bubble in the cocktail drinking
 class Bubble {
+  // private
   #position;
   #radius;
 
@@ -221,6 +224,7 @@ class Lyric {
 
 // light plate for showing lyrics
 class LightPlate {
+  // private
   #position;
   #glow = function (glowColor, blurriness) {
     drawingContext.shadowBlur = blurriness;
@@ -264,7 +268,9 @@ class LightPlate {
     );
   }
 
-  // find the current lyrics based on time
+  // lyric.csv stores each line's start in milliseconds.
+  // fifthVisualTime is when this visual was selected, so the lyric
+  // clock follows the song rather than the time since the page loaded.
   // return the array index if found, or -1 if not found
   currentLyricIndex() {
     // onemore timer is needed to call the lyrics out
@@ -334,6 +340,7 @@ class LightPlate {
 // linearGradient is not p5.js function, this is WebAPI function
 // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/createLinearGradient
 class DiscoBackground {
+  // private
   #position;
   #color_spectrum_divider;
   #red_factor;

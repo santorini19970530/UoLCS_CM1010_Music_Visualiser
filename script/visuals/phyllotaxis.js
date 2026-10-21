@@ -8,6 +8,7 @@
 function Phyllotaxis() {
   // private
   let c = 6;
+  // 137.5 degrees is the golden angle, so successive dots do not land on the same radius
   let expansionAngle = 137.5;
   let n = 0;
   let dots = [];
@@ -92,6 +93,9 @@ function Phyllotaxis() {
     footprint(t.forward(length));
 
     if (n > 0) {
+      // 37 degrees is the spread between the two child branches.
+      // Save the turtle, turn for the first branch, then pop so the
+      // opposite turn starts from the same point on the trunk.
       t.pushStep();
 
       t.turn(angle);
@@ -182,6 +186,7 @@ class Dot {
 // simulation of Logo language turtle
 // position and heading are restored only by popping the stack
 class Turtle {
+  // private
   #coordinateVector;
   #headingVector;
   #stateStack;
